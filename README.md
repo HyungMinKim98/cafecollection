@@ -22,6 +22,7 @@ esModuleInterop 및 allowSyntheticDefaultImports 등의 TypeScript 컴파일러 
 lsof -i :PORT 명령어를 사용하여 해당 포트를 사용 중인 프로세스 확인.
 해당 프로세스를 kill -9 PID 명령어로 종료.
 필요시 서버 설정에서 다른 포트 번호를 사용하도록 변경.
+
 문제 4: MongoDB 연결 이슈
 문제 상황: mongoose.connect() 호출 시 오류 발생.
 
