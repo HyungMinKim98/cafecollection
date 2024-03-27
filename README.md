@@ -5,6 +5,7 @@
 
 ts-node와 함께 tsconfig.json 설정을 확인하고, 필요한 TypeScript 컴파일러 옵션을 적절하게 설정.
 프로젝트의 TypeScript 버전과 ts-node 버전이 호환되는지 확인.
+
 문제 2: 모듈 해석 이슈
 문제 상황: 특정 모듈을 찾을 수 없거나, 임포트 시 오류 발생.
 
@@ -12,6 +13,7 @@ ts-node와 함께 tsconfig.json 설정을 확인하고, 필요한 TypeScript 컴
 
 npm install을 실행하여 모든 필요한 패키지와 그 의존성이 올바르게 설치되었는지 확인.
 esModuleInterop 및 allowSyntheticDefaultImports 등의 TypeScript 컴파일러 옵션을 사용하여 ES 모듈과 CommonJS 모듈 간 호환성 문제 해결.
+
 문제 3: 포트 충돌
 문제 상황: Express 서버 실행 시 "EADDRINUSE: address already in use" 오류로 인해 특정 포트를 사용할 수 없음.
 
