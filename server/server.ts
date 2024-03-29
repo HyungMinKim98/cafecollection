@@ -2,8 +2,22 @@ import express from 'express'; // If you're using TypeScript, ensure your setup 
 import mongoose from 'mongoose';
 import cors from 'cors';
 import 'dotenv/config';
+import reviewRoutes from './routes/reviewRoutes';
+import userRoutes from './routes/userRoutes';
 
 require('dotenv').config(); // If you're using JavaScript
+
+const cafeSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  photos: [{ type: String, required: true }], // 'image' 대신 'photos' 배열로 수정
+  // 추가적으로 원하는 필드를 정의할 수 있습니다.
+});
+
+const Cafe = mongoose.model('Cafe', cafeSchema);
+
+export default Cafe;
+
+
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -11,6 +25,33 @@ const PORT = process.env.PORT || 5001;
 // Middleware
 app.use(cors());
 app.use(express.json()); // This is to parse JSON bodies. This negates the need for body-parser.
+
+app.use('/api', reviewRoutes);
+app.use('/api', userRoutes);
+
+app.get('/cafes', async (req, res) => {
+  const cafes = await Cafe.find();
+  res.json(cafes);
+});
+
+app.post('/cafes', async (req, res) => {
+  const cafe = new Cafe(req.body);
+  await cafe.save();
+  res.status(201).json(cafe);
+});
+
+app.get('/cafes/:id', async (req, res) => {
+  try {
+    const cafe = await Cafe.findById(req.params.id);
+    if (!cafe) {
+      return res.status(404).send('Cafe not found');
+    }
+    res.json(cafe);
+  } catch (err) {
+    // Assert err is of type any to access its properties
+    res.status(500).send((err as any).message);
+  }
+});
 
 if (!process.env.MONGO_DB_URI) {
   throw new Error("MONGO_DB_URI is not defined");

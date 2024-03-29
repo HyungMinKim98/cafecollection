@@ -1,20 +1,21 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import { FaFacebook } from 'react-icons/fa';
-import { SiNaver, SiKakao } from 'react-icons/si';
-import { FcGoogle } from 'react-icons/fc';
 
-// Styled components for different sections of the main page
+// Example data for cafes
+const cafes = [
+  { name: "Cafe 1", image: "/img/cafe1.jpg" },
+  { name: "Cafe 2", image: "/img/cafe2.jpg" },
+  { name: "Cafe 3", image: "/img/cafe3.jpg" },
+  { name: "Cafe 3", image: "/img/cafe3.jpg" },
+  { name: "Cafe 3", image: "/img/cafe3.jpg" },
+  { name: "Cafe 3", image: "/img/cafe3.jpg" },
+  { name: "Cafe 3", image: "/img/cafe3.jpg" },
+  { name: "Cafe 3", image: "/img/cafe3.jpg" },
+  // Add more cafes here
+];
+
 const Container = styled.div`
   font-family: 'Arial', sans-serif;
-`;
-
-const Header = styled.header`
-  display: flex;
-  justify-content: space-between;
-  padding: 20px;
-  background-color: #f8f9fa;
 `;
 
 const HeroSection = styled.div`
@@ -31,95 +32,60 @@ const Section = styled.section`
   padding: 40px 20px;
 `;
 
-const Footer = styled.footer`
-  background-color: #343a40;
-  color: white;
-  text-align: center;
-  padding: 20px;
-`;
-
-const SnsButtonsContainer = styled.div`
+const CafeList = styled.div`
   display: flex;
-  justify-content: center;
+  overflow-x: auto;
   gap: 20px;
-  margin-top: 20px;
+  padding: 20px 0;
+  
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
 `;
 
-type SnsButtonProps = {
-  bg: string;
-  color?: string;
-  children: ReactNode;
-};
+const CafeItem = styled.div`
+  min-width: 220px;
+  text-align: center;
 
-const SnsButton = ({ bg, color = '#fff', children }: SnsButtonProps) => (
-  <button
-    style={{
-      width: '44px',
-      height: '44px',
-      borderRadius: '50%',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      border: 'none',
-      cursor: 'pointer',
-      backgroundColor: bg,
-      color: color,
-    }}
-  >
-    {children}
-  </button>
-);
+  img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+`;
 
-// Main component
 const Mainpage = () => {
   return (
     <Container>
-      <Header>
-        <div>Logo</div>
-        <nav>
-          <Link to="/cafes">Cafes</Link>
-          <Link to="/about">About</Link>
-        </nav>
-      </Header>
       <HeroSection>
         <h1>Welcome to Our Cafe Collection</h1>
         <p>Discover your next favorite cafe with us.</p>
       </HeroSection>
-      <Section>
-        <h2>How It Works</h2>
-        <p>Explore cafes, read reviews, and book your spot easily.</p>
-      </Section>
+      
       <Section>
         <h2>Featured Cafes</h2>
-        {/* Implementation for featured cafes list */}
+        <CafeList>
+          {cafes.map((cafe, index) => (
+            <CafeItem key={index}>
+              <img src={cafe.image} alt={cafe.name} />
+              <p>{cafe.name}</p>
+            </CafeItem>
+          ))}
+        </CafeList>
       </Section>
-      <Section>
-        <SnsButtonsContainer>
-            <SnsButton bg="#ffffff"><FcGoogle /></SnsButton>
-            <SnsButton bg="#3b5998" color="#fff"><FaFacebook /></SnsButton>
-            <SnsButton bg="#2DB400" color="#fff"><SiNaver /></SnsButton>
-            <SnsButton bg="#FEE500" color="#000"><SiKakao /></SnsButton>
-           </SnsButtonsContainer>
-         </Section>
-         <Section>
-           <h2>Categories</h2>
-           <div>
-             {/* Categories could be listed here */}
-           </div>
-         </Section>
-         <Section>
-           <h2>Testimonials</h2>
-           <p>User reviews and experiences can be shared here.</p>
-         </Section>
-         <Footer>
-           <p>Footer Content Here</p>
-           <Link to="/contact">Contact Us</Link>
-           <div>
-             {/* Social Media Links */}
-           </div>
-         </Footer>
-       </Container>
-     );
-   };
-   
-   export default Mainpage;
+
+      {/* Other sections */}
+    </Container>
+  );
+};
+
+export default Mainpage;
