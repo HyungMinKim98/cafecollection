@@ -4,6 +4,10 @@ import cors from 'cors';
 import 'dotenv/config';
 import reviewRoutes from './routes/reviewRoutes';
 import userRoutes from './routes/userRoutes';
+import cafeRoutes from './routes/cafeRoutes';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc';
+import { swaggerDefinition } from './swaggerDefinition';
 
 require('dotenv').config(); // If you're using JavaScript
 
@@ -19,15 +23,24 @@ export default Cafe;
 
 
 
+
 const app = express();
 const PORT = process.env.PORT || 5001;
+const options = {
+  swaggerDefinition,
+  // TypeScript에서는 routes 경로를 정확히 지정해야 합니다.
+  apis: ['./routes/**/*.ts'],
+};
+const swaggerSpec = swaggerJsdoc(options);
 
 // Middleware
 app.use(cors());
 app.use(express.json()); // This is to parse JSON bodies. This negates the need for body-parser.
 
+app.use('/api', cafeRoutes);
 app.use('/api', reviewRoutes);
 app.use('/api', userRoutes);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/cafes', async (req, res) => {
   const cafes = await Cafe.find();

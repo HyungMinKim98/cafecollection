@@ -43,5 +43,21 @@ router.get('/:id', async (req, res) => {
     res.status(500).json((err as any).message );
   }
 });
+/**
+ * @swagger
+ * /cafes:
+ *   get:
+ *     summary: List all cafes
+ *     responses:
+ *       200:
+ *         description: A list of cafes.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Cafe'
+ */
+
 
 export default router;

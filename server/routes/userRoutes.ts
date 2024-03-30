@@ -3,7 +3,7 @@ import User from '../models/User';
 
 const router = express.Router();
 
-router.get('/api/users', async (req, res) => {
+router.get('/users', async (req, res) => {
   try {
     const users = await User.find({});
     res.json(users);
@@ -13,7 +13,7 @@ router.get('/api/users', async (req, res) => {
 });
 
 // GET a user by ID
-router.get('/api/users/:id', async (req, res) => {
+router.get('/users/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
