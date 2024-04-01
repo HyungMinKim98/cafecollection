@@ -9,6 +9,7 @@ import IDSearchPage from './pages/LoginPage/IDSearchPage';
 import PasswordResetPage from './pages/LoginPage/PasswordResetPage';
 import RegistrationPage from './pages/LoginPage/RegistrationPage';
 import AboutPage from './pages/AboutPage/AboutPage';
+import CafeDetailPage from './pages/DetailPage/CafeDetailPage'; // Import the cafe detail page component
 
 const Layout = () => {
   return(
@@ -33,8 +34,10 @@ const App = () => {
           <Route path='passwordreset' element= {<PasswordResetPage />} />
           <Route path='register' element= {<RegistrationPage />} />
           <Route path='about' element= {<AboutPage/>} />
-  
+          <Route path='/cafes/:id' element={<CafeDetailPage />} />
 
+  
+c
         </Route>
       </Routes>
     </Router>

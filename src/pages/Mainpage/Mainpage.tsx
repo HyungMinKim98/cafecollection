@@ -1,18 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
-// Example data for cafes
-const cafes = [
-  { name: "Cafe 1", image: "/img/cafe1.jpg" },
-  { name: "Cafe 2", image: "/img/cafe2.jpg" },
-  { name: "Cafe 3", image: "/img/cafe3.jpg" },
-  { name: "Cafe 3", image: "/img/cafe3.jpg" },
-  { name: "Cafe 3", image: "/img/cafe3.jpg" },
-  { name: "Cafe 3", image: "/img/cafe3.jpg" },
-  { name: "Cafe 3", image: "/img/cafe3.jpg" },
-  { name: "Cafe 3", image: "/img/cafe3.jpg" },
-  // Add more cafes here
-];
+interface Cafe {
+  _id: string; // Add this line
+  name: string;
+  image: string;
+  rating?: number;
+  reviewsCount?: number;
+  address?: string;
+  phone?: string;
+  // Add more fields as necessary
+}
+
 
 const Container = styled.div`
   font-family: 'Arial', sans-serif;
@@ -64,6 +64,23 @@ const CafeItem = styled.div`
 `;
 
 const Mainpage = () => {
+  const [cafes, setCafes] = useState<Cafe[]>([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCafes = async () => {
+      const response = await fetch('http://localhost:5001/api/cafes');
+      const data = await response.json();
+      setCafes(data);
+    };
+
+    fetchCafes();
+  }, []);
+
+  const handleCafeClick = (cafeId: string) => {
+    navigate(`/cafes/${cafeId}`);
+  };
+
   return (
     <Container>
       <HeroSection>
@@ -75,7 +92,7 @@ const Mainpage = () => {
         <h2>Featured Cafes</h2>
         <CafeList>
           {cafes.map((cafe, index) => (
-            <CafeItem key={index}>
+            <CafeItem key={index} onClick={() => handleCafeClick(cafe._id)}>
               <img src={cafe.image} alt={cafe.name} />
               <p>{cafe.name}</p>
             </CafeItem>
@@ -83,7 +100,6 @@ const Mainpage = () => {
         </CafeList>
       </Section>
 
-      {/* Other sections */}
     </Container>
   );
 };

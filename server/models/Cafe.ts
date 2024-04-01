@@ -3,12 +3,16 @@ import mongoose, { Document, Schema } from 'mongoose';
 interface ICafe extends Document {
   name: string;
   location: {
-    type: string;
-    coordinates: number[];
+    address: string;
+    coordinates: {
+      lat: number;
+      lng: number;
+    };
   };
   hours: string;
   menuHighlights: string[];
   photos: string[];
+  description: string; // Add this line to include the description
 }
 
 const cafeSchema: Schema = new Schema({
@@ -21,5 +25,7 @@ const cafeSchema: Schema = new Schema({
   menuHighlights: [String],
   photos: [String]
 });
+const Cafe = mongoose.models.Cafe || mongoose.model<ICafe>('Cafe', cafeSchema);
 
-export default mongoose.model<ICafe>('Cafe', cafeSchema);
+
+export default Cafe;

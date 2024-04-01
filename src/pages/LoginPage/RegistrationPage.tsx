@@ -15,9 +15,6 @@ import {
   IconKakao,
 } from './RegistrationPageStyles';
 
-import { FcGoogle } from 'react-icons/fc'; // Import the icons directly
-import { FaFacebook } from 'react-icons/fa';
-import { SiNaver, SiKakao } from 'react-icons/si';
 import { SnsSignupButton } from './LoginPageStyles';
 const RegistrationPage = () => {
   const [formData, setFormData] = useState({
