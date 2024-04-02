@@ -8,20 +8,9 @@ import cafeRoutes from './routes/cafeRoutes';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { swaggerDefinition } from './swaggerDefinition';
+import Cafe from './models/Cafe';
 
 require('dotenv').config(); // If you're using JavaScript
-
-const cafeSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  photos: [{ type: String, required: true }], // 'image' 대신 'photos' 배열로 수정
-  // 추가적으로 원하는 필드를 정의할 수 있습니다.
-});
-
-const Cafe = mongoose.model('Cafe', cafeSchema);
-
-export default Cafe;
-
-
 
 
 const app = express();

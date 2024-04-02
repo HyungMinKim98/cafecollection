@@ -4,12 +4,15 @@ import Cafe from '../models/Cafe'; // Adjust the import path as necessary
 const router = express.Router();
 
 // Get all cafes
-router.get('/', async (req, res) => {
+router.get('/cafes', async (req, res) => {
+  console.log(req.url, req.method, req.params);
   try {
     const cafes = await Cafe.find();
     res.json(cafes);
   } catch (err) {
+    console.error(err);
     res.status(500).send((err as any).message);
+
   }
 });
 

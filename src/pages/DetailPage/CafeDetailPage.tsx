@@ -5,11 +5,11 @@ import { useParams } from 'react-router-dom';
 export interface Cafe {
   _id: string; // Add this line
   name: string;
-  image: string;
+  photo: string;
   rating?: number;
   reviewsCount?: number;
   address?: string;
-  phone: string;
+  phone?: string;
   features: string[];
   businessHours: string[];
   menuItems: {

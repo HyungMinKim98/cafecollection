@@ -3,14 +3,19 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
 interface Cafe {
-  _id: string; // Add this line
+  _id: string;
   name: string;
-  image: string;
+  photo: string; // 변경된 필드
   rating?: number;
   reviewsCount?: number;
   address?: string;
   phone?: string;
-  // Add more fields as necessary
+  features: string[];
+  businessHours: string[];
+  menuItems: {
+    name: string;
+    price: number;
+  }[];
 }
 
 
@@ -69,8 +74,9 @@ const Mainpage = () => {
 
   useEffect(() => {
     const fetchCafes = async () => {
-      const response = await fetch('http://localhost:5001/api/cafes');
+      const response = await fetch('http://localhost:5001/cafes');
       const data = await response.json();
+      console.log(data); // 서버 응답 로그 출력
       setCafes(data);
     };
 
@@ -93,7 +99,7 @@ const Mainpage = () => {
         <CafeList>
           {cafes.map((cafe, index) => (
             <CafeItem key={index} onClick={() => handleCafeClick(cafe._id)}>
-              <img src={cafe.image} alt={cafe.name} />
+              <img src={cafe.photo} alt={cafe.name} />
               <p>{cafe.name}</p>
             </CafeItem>
           ))}
