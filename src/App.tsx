@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import Footer from './components/Footer';
 import NavBar from './components/NavBar';
@@ -10,6 +9,7 @@ import PasswordResetPage from './pages/LoginPage/PasswordResetPage';
 import RegistrationPage from './pages/LoginPage/RegistrationPage';
 import AboutPage from './pages/AboutPage/AboutPage';
 import CafeDetailPage from './pages/DetailPage/CafeDetailPage'; // Import the cafe detail page component
+import ImageUpload from './components/ImageUpload'; // Adjust the path as needed
 
 const Layout = () => {
   return(
@@ -35,9 +35,7 @@ const App = () => {
           <Route path='register' element= {<RegistrationPage />} />
           <Route path='about' element= {<AboutPage/>} />
           <Route path='/cafes/:id' element={<CafeDetailPage />} />
-
-  
-c
+          <Route path='/some-path' element={<ImageUpload />} />
         </Route>
       </Routes>
     </Router>

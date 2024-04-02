@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
 
 const fetchCafes = async () => {
-  const res = await fetch('http://localhost:5001/api/cafes');
+  const res = await fetch('http://localhost:5001/cafes');
   if (!res.ok) {
     throw new Error('Network response was not ok');
   }

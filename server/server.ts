@@ -9,9 +9,21 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { swaggerDefinition } from './swaggerDefinition';
 import Cafe from './models/Cafe';
+import multer from 'multer';
 
 require('dotenv').config(); // If you're using JavaScript
 
+// Set up multer for file storage
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/') // Make sure this directory exists or create it
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname)
+  }
+});
+
+const upload = multer({ storage: storage });
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -54,6 +66,22 @@ app.get('/cafes/:id', async (req, res) => {
     res.status(500).send((err as any).message);
   }
 });
+
+// Upload route
+app.post('/upload', upload.single('image'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).send('No file uploaded.');
+  }
+  // The file is now saved in the uploads directory.
+  // Send back the file path as response, or store the path in the database.
+  res.status(201).json({
+    message: 'File uploaded successfully',
+    filePath: req.file.path
+  });
+});
+
+// Make the 'uploads' directory publicly accessible
+app.use('/uploads', express.static('uploads'));
 
 if (!process.env.MONGO_DB_URI) {
   throw new Error("MONGO_DB_URI is not defined");
