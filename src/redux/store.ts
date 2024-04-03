@@ -1,10 +1,11 @@
-import { createStore, applyMiddleware, Middleware } from 'redux';
-import thunk from 'redux-thunk';
-import reviewsReducer from './reducers';
+//store.ts
+import { createStore, applyMiddleware } from 'redux';
+import {thunk} from 'redux-thunk';
+import rootReducer from './reducers';
 
-const store = createStore(
-  reviewsReducer,
-  applyMiddleware(thunk as unknown as Middleware)
+export type RootState = ReturnType<typeof rootReducer>;
+
+export const store = createStore(
+  rootReducer,
+  applyMiddleware(thunk)
 );
-
-export default store;

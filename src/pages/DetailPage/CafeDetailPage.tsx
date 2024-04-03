@@ -6,6 +6,12 @@ import Map from '../../components/Map'; // Assume this is a component for displa
 import Reviews from '../../components/Reviews'; // Assume this is a component for displaying reviews
 import ReviewForm from './ReviewForm';
 import StarRating from './StarRating';
+import { useSelector, useDispatch } from 'react-redux';
+import { addReview as addReviewAction } from '../../redux/actions'; // Adjust import paths as necessary
+import { RootState } from '../../redux/store';
+import { Dispatch } from 'redux';
+import {thunk} from 'redux-thunk';
+import { Action } from 'redux'; // Import necessary types
 
 export interface Cafe {
   _id: string; // Add this line
@@ -29,7 +35,7 @@ interface Review {
   user: string;
   comment: string;
   cafeId: string;
-  rating: number; // 별점 정보 추가
+  rating?: number; // 별점 정보 추가
 
 }
 
@@ -109,17 +115,55 @@ const CafeImage = styled.img`
   margin-bottom: 20px;
 `;
 
+// Assuming you have an interface for your action and state
+interface ReviewAction {
+  type: string;
+  payload?: any;
+}
+
+export const addReview = (newReview: Review) => {
+  return async (dispatch: Dispatch<ReviewAction>): Promise<void> => {
+    try {
+      // Your async operation here
+      const response = await fetch('your-api-endpoint', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newReview),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit review');
+      }
+
+      const data = await response.json();
+      dispatch({
+        type: 'ADD_REVIEW_SUCCESS',
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: 'ADD_REVIEW_FAILURE',
+        payload: error,
+      });
+    }
+  };
+};
 
 const CafeDetailPage = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const [cafe, setCafe] = useState<Cafe | null>(null);
-  const [loading, setLoading] = useState(true); // 로딩 상태 추가
-  const [error, setError] = useState<string | null>(null); // 에러 상태 추가
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  const dispatch: Dispatch<any> = useDispatch();
+  const reviews = useSelector((state: RootState) => state.reviews) || [];
 
   const handleReviewSubmit = (newReview: Review) => {
-    setReviews(prevReviews => [...prevReviews, { ...newReview, id: String(prevReviews.length + 1) }]);
+    dispatch(addReviewAction(newReview));
   };
+
   
   useEffect(() => {
     const fetchData = async () => {
@@ -173,16 +217,17 @@ const CafeDetailPage = () => {
         ))}
         </Menu>
         <Map location={mapLocation} />
-        <ReviewForm cafeId={cafe._id} onSubmit={handleReviewSubmit} />
-        {reviews.map(review => (
+        {reviews.map((review: Review) => (
         <ReviewItem key={review.id}>
           <ReviewUserName>{review.user}</ReviewUserName>
           <ReviewRating>
-            <StarRating rating={review.rating} setRating={() => {}} /> {/* 읽기 전용 */}
+            <StarRating rating={review.rating || 0} setRating={() => {}} />
           </ReviewRating>
           <ReviewText>{review.comment}</ReviewText>
         </ReviewItem>
-))}        
+      ))}
+        <ReviewForm cafeId={cafe._id} onSubmit={handleReviewSubmit} />
+
       </CafeContainer>
     );
   };
