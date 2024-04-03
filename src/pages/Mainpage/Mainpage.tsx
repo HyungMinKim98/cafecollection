@@ -62,9 +62,11 @@ const CafeItem = styled.div`
   text-align: center;
 
   img {
-    width: 100%;
-    border-radius: 10px;
-    margin-bottom: 8px;
+    height: 200px; /* 이미지 높이를 고정값으로 설정 */
+    width: 100%; /* 컨테이너 너비에 맞춤 */
+    object-fit: cover; /* 이미지가 컨테이너 영역에 맞게 조정되도록 설정 */
+    border-radius: 10px; /* 필요한 경우, 이미지의 모서리를 둥글게 */
+    margin-bottom: 8px; /* 이미지와 텍스트 사이의 여백 설정 */
   }
 `;
 
@@ -99,7 +101,7 @@ const Mainpage = () => {
         <CafeList>
           {cafes.map((cafe, index) => (
             <CafeItem key={index} onClick={() => handleCafeClick(cafe._id)}>
-              <img src={cafe.photo} alt={cafe.name} />
+              <img src={`http://localhost:5001${cafe.photo}`} alt={cafe.name} />              
               <p>{cafe.name}</p>
             </CafeItem>
           ))}

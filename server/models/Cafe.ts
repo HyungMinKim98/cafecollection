@@ -4,14 +4,11 @@ interface ICafe extends Document {
   name: string;
   location: {
     address: string;
-    coordinates: {
-      lat: number;
-      lng: number;
-    };
+    coordinates: [number, number];
   };
   hours: string;
   menuHighlights: string[];
-  photos: string[];
+  photo: string;
   description: string; // Add this line to include the description
 }
 
@@ -23,7 +20,8 @@ const cafeSchema: Schema = new Schema({
   },
   hours: String,
   menuHighlights: [String],
-  photos: [String]
+  photo: String, // Changed from [String] to String
+  description: String,
 });
 const Cafe = mongoose.models.Cafe || mongoose.model<ICafe>('Cafe', cafeSchema);
 

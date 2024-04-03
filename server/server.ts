@@ -79,6 +79,20 @@ app.post('/upload', upload.single('image'), (req, res) => {
     filePath: req.file.path
   });
 });
+// 특정 ID를 가진 카페 데이터 삭제
+app.delete('/cafes/:id', async (req, res) => {
+  try {
+    const result = await Cafe.findByIdAndDelete(req.params.id);
+    if (result) {
+      res.send({ message: 'Cafe deleted successfully.' });
+    } else {
+      res.status(404).send({ message: 'Cafe not found.' });
+    }
+  } catch (error) {
+    res.status(500).send({ message: (error as any).message });
+  }
+});
+
 
 // Make the 'uploads' directory publicly accessible
 app.use('/uploads', express.static('uploads'));

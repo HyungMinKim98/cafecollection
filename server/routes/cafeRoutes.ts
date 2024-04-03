@@ -23,7 +23,7 @@ router.post('/', async (req, res) => {
     location: req.body.location,
     hours: req.body.hours,
     menuHighlights: req.body.menuHighlights,
-    photos: req.body.photos
+    photo: req.body.photo 
   });
 
   try {
