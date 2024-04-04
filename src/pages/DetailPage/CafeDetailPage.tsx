@@ -1,5 +1,5 @@
+// src>pages>DetailPage>CafeDetailPage.tsx
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 // import { fetchCafeDetails } from '../api'; // Assume this is an API call function
 import Map from '../../components/Map'; // Assume this is a component for displaying maps
@@ -12,23 +12,25 @@ import { RootState } from '../../redux/store';
 import { Dispatch } from 'redux';
 import {thunk} from 'redux-thunk';
 import { Action } from 'redux'; // Import necessary types
+import { Cafe } from '../../types/cafe';
 
-export interface Cafe {
-  _id: string; // Add this line
-  name: string;
-  photo: string;
-  rating?: number;
-  reviewsCount?: number;
-  address?: string;
-  phone?: string;
-  description: string; // 카페 설명
-  hours: string[];
-  menuHighlights: string[]; // 메뉴 하이라이트
-  location: { // Add this to reflect your data structure
-    address: string;
-    coordinates: [number, number]; // Assuming [lng, lat] format
-  };
-}
+import {
+  CafeContainer,
+  CafeHeader,
+  CafeName,
+  Rating,
+  Address,
+  Phone,
+  CafeImage,
+  Description,
+  Menu,
+  MenuItem,
+  ReviewItem,
+  ReviewUserName,
+  ReviewText,
+  ReviewRating
+} from './CafeDetailPageStyles'; // Import styled components
+import { Container } from '../Mainpage/styledComponents';
 
 interface Review {
   id?: string; // Optional if you're setting it only after adding a review
@@ -38,82 +40,6 @@ interface Review {
   rating?: number; // 별점 정보 추가
 
 }
-
-
-const CafeContainer = styled.div`
-  padding: 20px;
-  max-width: 800px;
-  margin: auto;
-`;
-
-const CafeHeader = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 20px;
-`;
-
-const CafeName = styled.h1`
-  font-size: 2rem;
-  margin: 0;
-`;
-
-const Rating = styled.span`
-  background-color: #ffdd57;
-  color: #333;
-  padding: 5px 10px;
-  border-radius: 5px;
-  margin-top: 10px;
-`;
-
-const Address = styled.p`
-  color: #666;
-`;
-
-const Phone = styled.p`
-  color: #666;
-`;
-
-const ReviewItem = styled.div`
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 10px;
-  background-color: #f9f9f9;
-`;
-
-const ReviewUserName = styled.h4`
-  margin: 0;
-  color: #333;
-  font-size: 16px;
-  font-weight: bold;
-`;
-
-const ReviewText = styled.p`
-  color: #666;
-`;
-
-const ReviewRating = styled.div`
-  display: flex;
-  align-items: center;
-  margin: 10px 0;
-`;
-
-const Menu = styled.div`
-  margin-bottom: 20px;
-`;
-
-const MenuItem = styled.div`
-  margin-bottom: 10px;
-`;
-
-const CafeImage = styled.img`
-  width: 100%;
-  max-width: 800px;
-  height: auto;
-  border-radius: 10px;
-  margin-bottom: 20px;
-`;
 
 // Assuming you have an interface for your action and state
 interface ReviewAction {
@@ -125,7 +51,7 @@ export const addReview = (newReview: Review) => {
   return async (dispatch: Dispatch<ReviewAction>): Promise<void> => {
     try {
       // Your async operation here
-      const response = await fetch('your-api-endpoint', {
+      const response = await fetch(`http://localhost:5001/cafes/:id/reviews`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -207,10 +133,10 @@ const CafeDetailPage = () => {
         <Phone>{cafe.phone}</Phone>
 
       </CafeHeader>
-      <CafeImage src={cafe.photo} alt={cafe.name} />
-      <p>{cafe.description}</p>
+        <img src={`http://localhost:5001${cafe.photo}`} alt={cafe.name} />              
+        <p>{cafe.description}</p>
         <p>{cafe.hours}</p>
-        <Menu>
+        <Menu>  
         <h3>Menu Highlights</h3>
         {cafe.menuHighlights.map((highlight, index) => (
           <MenuItem key={index}>{highlight}</MenuItem>
