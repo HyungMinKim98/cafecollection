@@ -1,11 +1,6 @@
 import { Dispatch } from 'redux';
 import { ADD_REVIEW_SUCCESS, ADD_REVIEW_FAILURE, FETCH_REVIEWS } from './actionTypes';
-
-interface Review {
-  cafeId: string;
-  user: string;
-  comment: string;
-}
+import { Review } from '../types/types';
 
 export const addReview = (newReview: Review) => async (dispatch: Dispatch) => {
   try {

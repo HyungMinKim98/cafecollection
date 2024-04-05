@@ -3,7 +3,7 @@ import { IoMdStar, IoMdStarOutline } from 'react-icons/io';
 
 interface StarRatingProps {
   rating: number;
-  setRating: (rating: number) => void;
+  setRating?: (rating: number) => void; // Make setRating optional
 }
 
 const StarRating: React.FC<StarRatingProps> = ({ rating, setRating }) => {
@@ -24,7 +24,7 @@ const StarRating: React.FC<StarRatingProps> = ({ rating, setRating }) => {
               type="radio"
               name="rating"
               value={ratingValue}
-              onClick={() => setRating(ratingValue)}
+              onClick={() => setRating && setRating(ratingValue)}
               style={{ display: 'none' }}
             />
             {ratingValue <= (hover || rating) ? (

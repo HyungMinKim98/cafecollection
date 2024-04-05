@@ -1,10 +1,7 @@
 import React from 'react';
+import { Review } from '../types/types';
 
-// Define the Review interface
-interface Review {
-  user: string;
-  comment: string;
-}
+
 
 // Define props for the Reviews component
 interface ReviewsProps {

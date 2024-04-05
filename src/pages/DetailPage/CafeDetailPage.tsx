@@ -1,11 +1,11 @@
 // src>pages>DetailPage>CafeDetailPage.tsx
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 // import { fetchCafeDetails } from '../api'; // Assume this is an API call function
 import Map from '../../components/Map'; // Assume this is a component for displaying maps
 import Reviews from '../../components/Reviews'; // Assume this is a component for displaying reviews
 import ReviewForm from './ReviewForm';
-import StarRating from './StarRating';
+import StarRating from '../ReviewPage/StarRating';
 import { useSelector, useDispatch } from 'react-redux';
 import { addReview as addReviewAction } from '../../redux/actions'; // Adjust import paths as necessary
 import { RootState } from '../../redux/store';
@@ -13,6 +13,8 @@ import { Dispatch } from 'redux';
 import {thunk} from 'redux-thunk';
 import { Action } from 'redux'; // Import necessary types
 import { Cafe } from '../../types/cafe';
+import { postReview } from '../../redux/reviewSlice';
+import { Review } from '../../types/types';
 
 import {
   CafeContainer,
@@ -28,18 +30,12 @@ import {
   ReviewItem,
   ReviewUserName,
   ReviewText,
-  ReviewRating
+  ReviewRating,
+  WriteReviewButton
 } from './CafeDetailPageStyles'; // Import styled components
 import { Container } from '../Mainpage/styledComponents';
 
-interface Review {
-  id?: string; // Optional if you're setting it only after adding a review
-  user: string;
-  comment: string;
-  cafeId: string;
-  rating?: number; // 별점 정보 추가
 
-}
 
 // Assuming you have an interface for your action and state
 interface ReviewAction {
@@ -79,6 +75,7 @@ export const addReview = (newReview: Review) => {
 
 const CafeDetailPage = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [cafe, setCafe] = useState<Cafe | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -86,8 +83,8 @@ const CafeDetailPage = () => {
   const dispatch: Dispatch<any> = useDispatch();
   const reviews = useSelector((state: RootState) => state.reviews) || [];
 
-  const handleReviewSubmit = (newReview: Review) => {
-    dispatch(addReviewAction(newReview));
+  const handleReviewSubmit = async (newReview: Review) => {
+    dispatch(postReview(newReview)); // Correct usage of dispatch
   };
 
   
@@ -109,6 +106,11 @@ const CafeDetailPage = () => {
 
     fetchData();
   }, [id]);
+
+
+  const navigateToReviewForm = () => {
+    navigate(`/cafes/${id}/review/new`);
+  };
 
   if (loading) return <div>Loading cafe details...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -133,26 +135,28 @@ const CafeDetailPage = () => {
         <Phone>{cafe.phone}</Phone>
 
       </CafeHeader>
-        <img src={`http://localhost:5001${cafe.photo}`} alt={cafe.name} />              
-        <p>{cafe.description}</p>
-        <p>{cafe.hours}</p>
+        <CafeImage src={`http://localhost:5001${cafe.photo}`} alt={cafe.name} />
+        <Description>{cafe.description}</Description>
+        <h4>운영시간: {cafe.hours}</h4>
         <Menu>  
-        <h3>Menu Highlights</h3>
+        <h3>Menu</h3>
         {cafe.menuHighlights.map((highlight, index) => (
           <MenuItem key={index}>{highlight}</MenuItem>
         ))}
         </Menu>
         <Map location={mapLocation} />
-        {reviews.map((review: Review) => (
-        <ReviewItem key={review.id}>
-          <ReviewUserName>{review.user}</ReviewUserName>
-          <ReviewRating>
-            <StarRating rating={review.rating || 0} setRating={() => {}} />
-          </ReviewRating>
-          <ReviewText>{review.comment}</ReviewText>
-        </ReviewItem>
-      ))}
-        <ReviewForm cafeId={cafe._id} onSubmit={handleReviewSubmit} />
+        <div>
+        {reviews.reviews && reviews.reviews.length > 0 ? reviews.reviews.map((review: Review) => (
+          <ReviewItem key={review.id}>
+            <ReviewUserName>{review.user}</ReviewUserName>
+            <ReviewRating>
+              <StarRating rating={review.rating || 0} />
+            </ReviewRating>
+            <ReviewText>{review.comment}</ReviewText>
+          </ReviewItem>
+        )) : <p>No reviews yet.</p>}
+      </div>
+      <WriteReviewButton onClick={navigateToReviewForm}>Write a Review</WriteReviewButton>
 
       </CafeContainer>
     );

@@ -1,13 +1,7 @@
 import React, { useState, FormEvent } from 'react';
-import StarRating from './StarRating';
+import StarRating from '../ReviewPage/StarRating';
+import { Review } from '../../types/types';
 
-interface Review {
-  id?: string;
-  user: string;
-  comment: string;
-  rating: number; // 별점 정보 추가
-  cafeId: string;
-}
 
 interface ReviewFormProps {
   cafeId: string;

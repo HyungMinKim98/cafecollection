@@ -1,10 +1,6 @@
 import { ADD_REVIEW, FETCH_REVIEWS } from './actionTypes';
+import { Review } from '../types/types';
 
-interface Review {
-  cafeId: string;
-  user: string;
-  comment: string;
-}
 
 interface Action {
   type: string;

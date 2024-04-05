@@ -37,7 +37,7 @@ const Mainpage = () => {
       </HeroSection>
       
       <Section>
-        <h2>Featured Cafes</h2>
+        <h2>Cafes</h2>
         <CafeList>
           {cafes.map((cafe, index) => (
             <CafeItem key={index} onClick={() => handleCafeClick(cafe._id)}>
