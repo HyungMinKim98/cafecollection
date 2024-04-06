@@ -11,6 +11,7 @@ import AboutPage from './pages/AboutPage/AboutPage';
 import CafeDetailPage from './pages/DetailPage/CafeDetailPage'; // Import the cafe detail page component
 import ImageUpload from './components/ImageUpload'; // Adjust the path as needed
 import ReviewPage from './pages/ReviewPage/ReviewPage';
+import UserPage from './pages/UserPage/UserPage';
 
 const Layout = () => {
   return(
@@ -35,6 +36,7 @@ const App = () => {
           <Route path='passwordreset' element= {<PasswordResetPage />} />
           <Route path='register' element= {<RegistrationPage />} />
           <Route path='about' element= {<AboutPage/>} />
+          <Route path='user' element= {<UserPage/>} />
           <Route path='/cafes/:id/review/new' element={<ReviewPage />} />
           <Route path='/cafes/:id' element={<CafeDetailPage />} />
           <Route path='/some-path' element={<ImageUpload />} />

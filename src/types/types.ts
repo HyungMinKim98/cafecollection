@@ -22,3 +22,10 @@ export interface ReviewState {
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
 }
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  region: string; // 사용자의 지역 정보 추가
+}
