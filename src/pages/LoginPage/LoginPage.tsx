@@ -1,3 +1,7 @@
+//src > pages> LoginPage>LoginPage.tsx
+import '../../firebase'; // Firebase 초기화 먼저 임포트
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { useNavigate } from 'react-router-dom'; // useNavigate 임포트
 import React, { useState } from 'react';
 import {
   LoginPageContainer,
@@ -16,6 +20,21 @@ import {
 } from './LoginPageStyles';
 
 const LoginPage = () => {
+  const navigate = useNavigate(); // 여기에서 useNavigate 훅 사용
+  // 로그인 함수 정의
+  const loginWithGoogle = () => {
+    const provider = new GoogleAuthProvider();
+    const auth = getAuth();
+
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        console.log("로그인 성공", result.user);
+        navigate('/'); // 로그인 성공 후 메인 페이지로 리디렉션
+      })
+      .catch((error) => {
+        console.error("로그인 실패", error);
+      });
+  };
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -69,7 +88,7 @@ const LoginPage = () => {
             {/* SNS Signup Buttons */}
             <p>SNS계정으로 간편 로그인/회원가입</p>
             <SnsSignupButtonsContainer>
-              <SnsSignupButton variant="google"><IconGoogle /></SnsSignupButton>
+              <SnsSignupButton variant="google" onClick={loginWithGoogle}><IconGoogle /></SnsSignupButton>
               <SnsSignupButton variant="facebook"><IconFacebook /></SnsSignupButton>
               <SnsSignupButton variant="naver"><IconNaver /></SnsSignupButton>
               <SnsSignupButton variant="kakao"><IconKakao /></SnsSignupButton>

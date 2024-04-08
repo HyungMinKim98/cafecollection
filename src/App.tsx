@@ -1,3 +1,4 @@
+//src > App.tsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import Footer from './components/Footer';
@@ -12,6 +13,7 @@ import CafeDetailPage from './pages/DetailPage/CafeDetailPage'; // Import the ca
 import ImageUpload from './components/ImageUpload'; // Adjust the path as needed
 import ReviewPage from './pages/ReviewPage/ReviewPage';
 import UserPage from './pages/UserPage/UserPage';
+import './firebase'; // Firebase 초기화
 
 const Layout = () => {
   return(

@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { Review, User } from '../../types/types';
 import { Cafe } from '../../types/cafe';
 import axios from 'axios'; // API 호출을 위해 axios 사용 가정
+import { getAuth, onAuthStateChanged } from "firebase/auth"; // Firebase 인증 모듈 임포트
 
 // Styled Components
 const Container = styled.div`
@@ -54,46 +55,95 @@ const NoDataText = styled.p`
 
 const UserPage = () => {
   const [userInfo, setUserInfo] = useState<User | null>(null);
-  const [loading, setLoading] = useState(false); // Loading 상태 관리 (현재는 사용하지 않음)
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(''); // 에러 메시지 상태 관리
   const [nearbyCafes, setNearbyCafes] = useState<Cafe[]>([]); // 가까운 카페
-  const [userReviews, setUserReviews] = useState<Review[]>([
-    { id: '1', cafeId: 'cafe1', user: 'John Doe', comment: 'Great experience!', rating: 5 },
-    { id: '2', cafeId: 'cafe2', user: 'John Doe', comment: 'Could be better.', rating: 3 },
-  ]);
+  const [userReviews, setUserReviews] = useState<Review[]>([]);
+
   const [selectedRegion, setSelectedRegion] = useState<string>(''); // 선택된 지역
 
 
   useEffect(() => {
-    const fetchUserDataAndReviews = async () => {
-      try {
-        // 사용자 정보와 리뷰를 가져오는 API 호출 (가정)
-        const userInfoResponse = await axios.get('/api/user/profile');
-        const userReviewsResponse = await axios.get('/api/reviews/user');
-        setUserInfo(userInfoResponse.data);
-        setUserReviews(userReviewsResponse.data);
-
-        // 선택된 지역에 따라 가까운 카페 목록을 가져오는 API 호출 (가정)
-        if (userInfo?.region) {
-          const nearbyCafesResponse = await axios.get(`/api/cafes/nearby?region=${selectedRegion}`);
-          setNearbyCafes(nearbyCafesResponse.data);
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setLoading(true);
+        try {
+          const response = await axios.get(`/api/users/${user.uid}/region`);
+          // response.data에 region 속성이 있다고 가정하고, 없으면 "지역 정보 없음"을 기본값으로 사용
+          const regionFromResponse = response.data ? response.data.region : "지역 정보 없음";
+          // userInfo를 업데이트할 때, 모든 필수 속성을 포함한 새 객체를 생성
+            // 사용자 정보 업데이트
+            const updatedUserInfo: User = {
+              id: user.uid,
+              name: user.displayName || "익명 사용자",
+              email: user.email || "이메일 없음",
+              region: regionFromResponse, // API 응답에서 받은 region 값 또는 기본값 사용
+          };
+          setUserInfo(updatedUserInfo);
+        } catch (error) {
+          console.error("사용자 정보 또는 지역 정보 가져오기 실패:", error);
+          setError("정보를 가져오는 데 실패했습니다.");
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error('데이터 로딩 중 오류 발생', error);
+      } else {
+        // 사용자 로그아웃 처리
+        setUserInfo(null);
       }
-    };
+    });
+  
+    return () => unsubscribe();
+  }, []);
+  
+  const fetchUserDataAndReviews = async (user: User) => {
+    setLoading(true);
+    try {
+      // 사용자 정보와 관련된 API 호출 로직
+      // 예: 사용자 리뷰 가져오기
+      const userReviewsResponse = await axios.get(`/api/reviews/user/${user.email}`);
+      setUserReviews(userReviewsResponse.data);
 
-    fetchUserDataAndReviews();
-  }, [selectedRegion]);
-
- 
-  const handleRegionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedRegion(e.target.value);
+      // 사용자 지역에 따른 카페 목록 가져오기 (지역 상태가 변경될 때마다 호출될 수 있도록 별도의 useEffect에서 처리할 수도 있습니다)
+      if (selectedRegion) {
+        const nearbyCafesResponse = await axios.get(`/api/cafes/nearby?region=${selectedRegion}`);
+        setNearbyCafes(nearbyCafesResponse.data);
+      }
+    } catch (error) {
+      console.error('데이터 로딩 중 오류 발생', error);
+      setError('데이터를 가져오는 중 오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  if (loading) return <div>로딩 중...</div>;
-  if (error) return <div>오류: {error}</div>;
+  const handleRegionChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedRegion = e.target.value;
+    setSelectedRegion(selectedRegion);
+  
+    // 사용자가 로그인한 상태라면 선택된 지역 정보를 서버에 업데이트
+    if (userInfo && userInfo.id) {
+      try {
+        await axios.post(`/api/users/${userInfo.id}/updateRegion`, { region: selectedRegion });
+        // 상태 업데이트 및 사용자에게 알림 표시 등의 추가 작업
+      } catch (error) {
+        console.error("지역 정보 업데이트 실패:", error);
+        // 에러 처리
+      }
+    }
+  };
 
+  if (loading) {
+    return <div>로딩 중...</div>;
+  }
+  if (error) {
+    return (
+      <div>
+        <p>오류: {error}</p>
+        <p>문제가 지속되면 고객 지원에 문의해주세요.</p>
+      </div>
+    );
+  }
   return (
     <Container>
       <Section>

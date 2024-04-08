@@ -1,3 +1,4 @@
+// server>routes>cafeRoutes.ts
 import express from 'express';
 import Cafe from '../models/Cafe'; // Adjust the import path as necessary
 

@@ -1,3 +1,4 @@
+// server> server.ts
 import express from 'express'; // If you're using TypeScript, ensure your setup allows for ES Modules
 import mongoose from 'mongoose';
 import cors from 'cors';
@@ -10,6 +11,8 @@ import swaggerJsdoc from 'swagger-jsdoc';
 import { swaggerDefinition } from './swaggerDefinition';
 import Cafe from './models/Cafe';
 import multer from 'multer';
+import User from './models/User'; // 수정된 임포트 경로
+
 
 require('dotenv').config(); // If you're using JavaScript
 
@@ -40,7 +43,7 @@ app.use(express.json()); // This is to parse JSON bodies. This negates the need 
 
 app.use('/api', cafeRoutes);
 app.use('/api', reviewRoutes);
-app.use('/api', userRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/cafes', async (req, res) => {
@@ -107,6 +110,43 @@ mongoose.connect(process.env.MONGO_DB_URI)
 app.get('/', (req, res) => {
   res.send('Hello World');
 });
+
+// 사용자 지역 정보 업데이트 엔드포인트
+app.post('/:uid/updateRegion', async (req, res) => {
+  const userId = req.params.uid; // URL에서 uid 추출
+  const { region } = req.body; // 요청 본문에서 region 값 추출
+  
+  try {
+    // 사용자 ID를 사용하여 사용자 정보를 찾고, region 값을 업데이트합니다.
+    const updatedUser = await User.findByIdAndUpdate(userId, { region }, { new: true });
+    if (updatedUser) {
+      res.json(updatedUser);
+    } else {
+      res.status(404).json({ message: 'User not found.' });
+      console.log(userId);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error updating user region.' });
+  }
+});
+
+
+app.get('/:uid/region', async (req, res) => {
+  const userId = req.params.uid;
+  try {
+    const user = await User.findById(userId);
+    if (user && user.region) {
+      res.json({ region: user.region });
+    } else {
+      res.status(404).json({ message: 'Region not found for the user.' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching user region' });
+  }
+});
+
 
 // Start the server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
