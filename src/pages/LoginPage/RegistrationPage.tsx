@@ -1,3 +1,4 @@
+//src>pages>LoginPage>RegistrationPage.tsx
 import React, { ChangeEvent, FormEvent, useState } from 'react';
 import {
   RegistrationPageContainer,

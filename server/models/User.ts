@@ -1,23 +1,14 @@
 // models/User.ts
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose from 'mongoose';
 
-interface IUser extends Document {
-  name?: string;
-  email: string;
-  password: string;
-  firebaseUid: string; // Add this line
-  favorites?: mongoose.Types.ObjectId[]; // 이제 선택적입니다.
-  region?: string;
-}
-
-const userSchema: Schema = new Schema({
-  name: { type: String, required: false }, // 이름도 선택적일 수 있습니다.
+const userSchema = new mongoose.Schema({
+  firebaseUid: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  firebaseUid: { type: String, required: true, unique: true }, // Ensure it's required and unique
-  favorites: [{ type: Schema.Types.ObjectId, ref: 'Cafe', required: false }], // 선택적 필드
-  region: { type: String, required: false }, // 지역도 선택적일 수 있습니다.
+  name: String,
+  region: String,
+  // 추가 필드
 });
 
-export default mongoose.model<IUser>('User', userSchema);
+const User = mongoose.model('User', userSchema);
 
+export default User;

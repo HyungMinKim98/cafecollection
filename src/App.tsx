@@ -13,6 +13,7 @@ import CafeDetailPage from './pages/DetailPage/CafeDetailPage'; // Import the ca
 import ImageUpload from './components/ImageUpload'; // Adjust the path as needed
 import ReviewPage from './pages/ReviewPage/ReviewPage';
 import UserPage from './pages/UserPage/UserPage';
+import ProfileCompletionPage from './pages/ProfileCompletionPage/ProfileCompletionPage'; 
 import './firebase'; // Firebase 초기화
 
 const Layout = () => {
@@ -39,6 +40,7 @@ const App = () => {
           <Route path='register' element= {<RegistrationPage />} />
           <Route path='about' element= {<AboutPage/>} />
           <Route path='user' element= {<UserPage/>} />
+          <Route path="/profile-completion" element={<ProfileCompletionPage />} />
           <Route path='/cafes/:id/review/new' element={<ReviewPage />} />
           <Route path='/cafes/:id' element={<CafeDetailPage />} />
           <Route path='/some-path' element={<ImageUpload />} />

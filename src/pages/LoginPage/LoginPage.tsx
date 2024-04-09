@@ -19,6 +19,22 @@ import {
   SnsSignupButtonsContainer
 } from './LoginPageStyles';
 
+const checkUserProfile = async (uid: string): Promise<boolean> => {
+  try {
+    // Example API call - replace with your actual backend endpoint
+    const response = await fetch(`http://localhost:5001/users/${uid}/region`);
+    if (!response.ok) throw new Error('Failed to fetch profile status');
+    
+    const data = await response.json();
+    // Assuming the backend returns an object with a 'needsCompletion' boolean
+    const needsCompletion = !data.region; // region 정보가 없다면 프로필 완성이 필요함
+    return needsCompletion;
+  } catch (error) {
+    console.error('Error checking user profile:', error);
+    return true; // Assume profile needs completion on error, or handle as appropriate
+  }
+};
+
 const LoginPage = () => {
   const navigate = useNavigate(); // 여기에서 useNavigate 훅 사용
   // 로그인 함수 정의
@@ -27,13 +43,20 @@ const LoginPage = () => {
     const auth = getAuth();
 
     signInWithPopup(auth, provider)
-      .then((result) => {
-        console.log("로그인 성공", result.user);
-        navigate('/'); // 로그인 성공 후 메인 페이지로 리디렉션
-      })
-      .catch((error) => {
-        console.error("로그인 실패", error);
-      });
+    .then(async (result) => {
+      const user = result.user;
+      console.log(result.user)
+      // Check if the user needs to complete their profile
+      const needsProfileCompletion = await checkUserProfile(user.uid);
+      if (needsProfileCompletion) {
+        navigate('/profile-completion'); // Redirect to profile completion
+      } else {
+        navigate('/'); // Redirect to home page
+      }
+    })
+    .catch((error) => {
+      console.error("Login failed", error);
+    });
   };
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
