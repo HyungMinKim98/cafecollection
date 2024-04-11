@@ -15,6 +15,7 @@ import ReviewPage from './pages/ReviewPage/ReviewPage';
 import UserPage from './pages/UserPage/UserPage';
 import ProfileCompletionPage from './pages/ProfileCompletionPage/ProfileCompletionPage'; 
 import './firebase'; // Firebase 초기화
+import EditProfilePage from './pages/EditProfilePage/EditProfilePage';
 
 const Layout = () => {
   return(
@@ -43,6 +44,7 @@ const App = () => {
           <Route path="/profile-completion" element={<ProfileCompletionPage />} />
           <Route path='/cafes/:id/review/new' element={<ReviewPage />} />
           <Route path='/cafes/:id' element={<CafeDetailPage />} />
+          <Route path="/edit-profile" element={<EditProfilePage />} />
           <Route path='/some-path' element={<ImageUpload />} />
         </Route>
       </Routes>

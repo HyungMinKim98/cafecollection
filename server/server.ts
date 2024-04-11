@@ -43,7 +43,7 @@ app.use(express.json()); // This is to parse JSON bodies. This negates the need 
 
 app.use('/api', cafeRoutes);
 app.use('/api', reviewRoutes);
-app.use('/users', userRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/cafes', async (req, res) => {

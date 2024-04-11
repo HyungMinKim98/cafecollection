@@ -22,7 +22,7 @@ import {
 const checkUserProfile = async (uid: string): Promise<boolean> => {
   try {
     // Example API call - replace with your actual backend endpoint
-    const response = await fetch(`http://localhost:5001/users/${uid}/region`);
+    const response = await fetch(`http://localhost:5001/api/users/${uid}`);
     if (!response.ok) throw new Error('Failed to fetch profile status');
     
     const data = await response.json();

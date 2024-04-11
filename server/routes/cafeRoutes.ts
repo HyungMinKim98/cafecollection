@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
 });
 
 // Get a single cafe by ID
-router.get('/:id', async (req, res) => {
+router.get('/cafes/:id', async (req, res) => {
   try {
     const cafe = await Cafe.findById(req.params.id);
     if (!cafe) {
