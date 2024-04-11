@@ -1,10 +1,10 @@
 // src/pages/EditProfilePage/EditProfilePage.tsx
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { RootState } from '../../../src/redux/store';
-import { updateUserProfile } from '../../../src/redux/userSlice';
+import { fetchUserProfile, updateUserProfile } from '../../../src/redux/userSlice';
 import { useAppDispatch, useAppSelector } from '../../../src/redux/hooks';
 
 const EditProfilePage: React.FC = () => {
@@ -12,41 +12,44 @@ const EditProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const user = useAppSelector((state: RootState) => state.user.userInfo);
 
-  // Local state for form fields, initialized with user info from global state
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
   const [region, setRegion] = useState(user?.region || '');
 
-  const handleSave = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault();
+  useEffect(() => {
+    if (user && user.firebaseUid) {
+      dispatch(fetchUserProfile(user.firebaseUid));
+    }
+  }, [dispatch, user?.firebaseUid]);
+
+  const handleSave = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();  // Prevent default form submission
     if (user?.firebaseUid) {
       await dispatch(updateUserProfile({ firebaseUid: user.firebaseUid, name, email, region }));
-      navigate('/user');
+      navigate('/user'); // Navigate to the user profile page after update
     } else {
-      alert("Firebase UID is missing, cannot update profile.");
+      console.error("Firebase UID is missing, unable to update profile.");
     }
   };
+  
 
-  return (
-    <div className="edit-profile-container">
-      <h1>Edit Profile</h1>
-      <form>
-        <div>
+    return (
+      <div className="edit-profile-container">
+        <h1>Edit Your Profile</h1>
+        <form onSubmit={handleSave}>
           <label htmlFor="name">Name:</label>
-          <input id="name" value={name} onChange={(e) => setName(e.target.value)} />
-        </div>
-        <div>
+          <input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} />
+
           <label htmlFor="email">Email:</label>
           <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        </div>
-        <div>
-          <label htmlFor="region">Region:</label>
-          <input id="region" value={region} onChange={(e) => setRegion(e.target.value)} />
-        </div>
-        <button onClick={handleSave}>Save</button>
-      </form>
-    </div>
-  );
-};
 
-export default EditProfilePage;
+          <label htmlFor="region">Region:</label>
+          <input id="region" type="text" value={region} onChange={(e) => setRegion(e.target.value)} />
+
+          <button type="submit">Save Changes</button>
+        </form>
+      </div>
+    );
+  };
+
+  export default EditProfilePage;

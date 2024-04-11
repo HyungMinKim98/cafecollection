@@ -16,6 +16,7 @@ import UserPage from './pages/UserPage/UserPage';
 import ProfileCompletionPage from './pages/ProfileCompletionPage/ProfileCompletionPage'; 
 import './firebase'; // Firebase 초기화
 import EditProfilePage from './pages/EditProfilePage/EditProfilePage';
+import useAuth from './useAuth';
 
 const Layout = () => {
   return(
@@ -30,6 +31,7 @@ const Layout = () => {
   )
 }
 const App = () => {
+  useAuth();
   return (
     <Router>
       <Routes>

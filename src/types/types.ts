@@ -47,11 +47,14 @@ export interface ReviewState {
 }
 
 export interface User {
-  firebaseUid: string,
-  name: string;
-  email: string;
-  region: string; // 사용자의 지역 정보 추가
+  firebaseUid: string;
+  name: string | null;  // displayName can be null
+  email: string | null; // email can be null
+  region?: string;  // Make region optional
+  photoUrl?: string | null; // Optional and can be null
 }
 export interface UserState {
   userInfo: User | null;
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  error: string | null;
 }

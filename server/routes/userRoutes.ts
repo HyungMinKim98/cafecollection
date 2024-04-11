@@ -33,46 +33,48 @@ router.post('/', async (req, res) => {
 // 사용자 프로필 조회
 router.get('/:firebaseUid', async (req, res) => {
   const { firebaseUid } = req.params;
-  console.log("Received request for UID:", req.params.firebaseUid);
+  console.log("Lookup for UID:", firebaseUid); // 로깅 추가
 
   try {
     const user = await User.findOne({ firebaseUid });
-    console.log("Received request for UID:", req.params.firebaseUid);
     if (user) {
+      console.log("User found:", user);
       res.json(user);
-      console.log("Received request for UID:", req.params.firebaseUid);
     } else {
+      console.log("User not found for UID:", firebaseUid); // 로깅 추가
       res.status(404).json({ message: 'User not found.' });
-      console.log("Received request for UID:", req.params.firebaseUid);
-
     }
   } catch (error) {
+    console.error("Error on fetching user:", error); // 에러 로깅 추가
     res.status(500).json({ message: 'Server error.' });
   }
 });
 
+
 // 사용자 프로필 업데이트
-router.post('/updateProfile', async (req, res) => {
-  console.log("Update request received for UID:", req.body.firebaseUid);
-  const { firebaseUid, name, email } = req.body;
+router.post('/:firebaseUid/update', async (req, res) => {
+  const { firebaseUid } = req.params;
+  const { name, email, region } = req.body;
+
+  console.log(`Update request received for UID: ${firebaseUid}`, req.body);
 
   try {
     const updatedUser = await User.findOneAndUpdate(
-      { firebaseUid }, // Firebase UID를 사용하여 사용자 식별
-      { name, email }, // 이름과 이메일 정보 업데이트
-      { new: true } // 업데이트된 문서 반환
+      { firebaseUid }, 
+      { name, email, region },
+      { new: true, runValidators: true }
     );
-    console.log("Updated User:", updatedUser);
 
     if (updatedUser) {
+      console.log(`Updated User:`, updatedUser);
       res.json(updatedUser);
     } else {
+      console.log(`User not found for UID: ${firebaseUid}`);
       res.status(404).json({ message: 'User not found.' });
     }
   } catch (error) {
     console.error('Error updating user profile:', error);
-    res.status(500).json({ message: 'Server error.' });
+    res.status(500).json({ message: 'Unknown error occurred.' });
   }
 });
-
 export default router;

@@ -18,17 +18,11 @@ const ProfileCompletionPage = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    // 이 부분 삭제
-    // const firebaseUid = 'your_firebase_uid';
-
     if (firebaseUid) {
-      // 백엔드에 프로필 정보 업데이트 요청을 보냅니다.
       await dispatch(updateUserProfile({ firebaseUid, name, email, region }));
-      navigate('/user'); // 프로필 업데이트 후 유저 페이지로 리다이렉트
+      navigate('/user'); // navigate after update
     } else {
       console.error("No Firebase UID found. User is not logged in.");
-      // 사용자가 로그인하지 않은 상태를 처리하는 로직
     }
   };
 

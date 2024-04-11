@@ -31,7 +31,7 @@ const UserPage: React.FC = () => {
             <p><strong>이름:</strong> {user?.name}</p>
             <p><strong>이메일:</strong> {user?.email}</p>
             <p><strong>지역:</strong> {user?.region}</p>
-            <button onClick={handleEditProfile} className="edit-button">Edit Profile</button>
+            <button onClick={handleEditProfile} className="edit-button">프로필 수정</button>
           </div>
         </div>
       </div>
