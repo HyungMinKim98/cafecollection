@@ -111,5 +111,24 @@ app.get('/', (req, res) => {
   res.send('Hello World');
 });
 
+// 사용자 프로필 조회
+app.get('/api/users/:firebaseUid', async (req, res) => {
+  console.log("Received request for UID:", req.params.firebaseUid);
+  try {
+    const user = await User.findOne({ firebaseUid: req.params.firebaseUid });
+    console.log("Received request for UID:", req.params.firebaseUid);
+    if (user) {
+      res.json(user);
+      console.log("Received request for UID:", req.params.firebaseUid);
+    } else {
+      res.status(404).json({ message: 'User not found.' });
+      console.log("Received request for UID:", req.params.firebaseUid);
+
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Server error.' });
+  }
+});
+
 // Start the server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

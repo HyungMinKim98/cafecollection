@@ -8,6 +8,8 @@ const userSchema = new mongoose.Schema({
   region: String,
   // 추가 필드
 });
+userSchema.index({ firebaseUid: 1 });
+
 
 const User = mongoose.model('User', userSchema);
 

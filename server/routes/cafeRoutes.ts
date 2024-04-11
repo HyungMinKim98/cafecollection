@@ -18,7 +18,7 @@ router.get('/cafes', async (req, res) => {
 });
 
 // Add a new cafe
-router.post('/', async (req, res) => {
+router.post('/cafes', async (req, res) => {
   const cafe = new Cafe({
     name: req.body.name,
     location: req.body.location,
