@@ -4,25 +4,32 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { updateUserProfile } from '../../redux/userSlice'; // 액션 크리에이터의 경로를 확인하세요.
 import { getAuth } from "firebase/auth";
-import { useAppDispatch } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 const ProfileCompletionPage = () => {
   const [name, setName] = useState('');
-  const [region, setRegion] = useState('');
   const [email, setEmail] = useState('');
-  const navigate = useNavigate();
+  const [region, setRegion] = useState('');
   const dispatch = useAppDispatch();
-  const auth = getAuth();
-  const user = auth.currentUser;
-  const firebaseUid = user ? user.uid : null;
+  const navigate = useNavigate();
+  const user = useAppSelector(state => state.user.userInfo); // 올바른 위치에서 훅 호출
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (firebaseUid) {
-      await dispatch(updateUserProfile({ firebaseUid, name, email, region }));
-      navigate('/user'); // navigate after update
+    // 사용자 정보가 Redux 상태에 이미 있어야 함을 가정
+    if (user && user.firebaseUid) {
+      try {
+        const resultAction = await dispatch(updateUserProfile({
+          firebaseUid: user.firebaseUid, // firebaseUid를 포함
+          name, email, region
+        })).unwrap();
+        console.log("Profile updated successfully", resultAction);
+        navigate('/user');
+      } catch (err) {
+        console.error("Failed to update profile", err);
+      }
     } else {
-      console.error("No Firebase UID found. User is not logged in.");
+      console.error("No user information available");
     }
   };
 

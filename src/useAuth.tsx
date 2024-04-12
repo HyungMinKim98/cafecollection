@@ -1,3 +1,4 @@
+//src>useAuth.tsx
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
@@ -9,20 +10,18 @@ const useAuth = () => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-        if (user) {
-            const { uid, displayName, email, photoURL } = user;
-            dispatch(setUser({
-              firebaseUid: uid,
-              name: displayName || 'Default Name',
-              email: email || 'No email provided',
-              photoUrl: photoURL,
-              region: 'Default Region'  // Provide a default region if not available
-          }));
-        } else {
-            dispatch(clearUser());
-        }
+      if (user) {
+        dispatch(setUser({
+          firebaseUid: user.uid,
+          name: user.displayName,
+          email: user.email,
+          photoUrl: user.photoURL,
+          region: 'Default Region'  // Assuming you want to set a default
+        }));
+      } else {
+        dispatch(clearUser());
+      }
     });
-
     return () => unsubscribe(); // Cleanup subscription on unmount
   }, [dispatch, auth]);
 

@@ -33,20 +33,19 @@ router.post('/', async (req, res) => {
 // 사용자 프로필 조회
 router.get('/:firebaseUid', async (req, res) => {
   const { firebaseUid } = req.params;
-  console.log("Lookup for UID:", firebaseUid); // 로깅 추가
+  console.log(`Attempting to find user with UID: ${firebaseUid}`);
 
   try {
     const user = await User.findOne({ firebaseUid });
-    if (user) {
-      console.log("User found:", user);
-      res.json(user);
-    } else {
-      console.log("User not found for UID:", firebaseUid); // 로깅 추가
-      res.status(404).json({ message: 'User not found.' });
+    if (!user) {
+      console.log(`User with UID: ${firebaseUid} not found.`);
+      return res.status(404).json({ message: 'User not found.' });
     }
+    console.log(`User found: ${user}`);
+    res.json(user);
   } catch (error) {
-    console.error("Error on fetching user:", error); // 에러 로깅 추가
-    res.status(500).json({ message: 'Server error.' });
+    console.error(`Error fetching user with UID: ${firebaseUid}: ${error}`);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 

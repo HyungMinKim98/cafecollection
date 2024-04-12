@@ -4,6 +4,8 @@ import { ADD_REVIEW_SUCCESS, ADD_REVIEW_FAILURE, FETCH_REVIEWS } from './actionT
 import { Review, PROFILE_UPDATE_REQUEST, PROFILE_UPDATE_SUCCESS, PROFILE_UPDATE_FAIL, UserActionTypes, User, } from '../types/types';
 import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { RootState } from './store';
+import { setUser } from './userSlice';
 
 // Define the structure for the update payload
 interface UpdateProfilePayload {
@@ -41,40 +43,21 @@ export const addReview = (newReview: Review) => async (dispatch: Dispatch) => {
   }
 };
 
-// Define a type for the dispatch function
-export const fetchReviews = () => async (dispatch: Dispatch) => {
-  try {
-    const response = await fetch('http://localhost:5001/reviews');
-    if (!response.ok) {
-      throw new Error('Failed to fetch reviews');
-    }
-
-    const data = await response.json();
-    dispatch({ type: FETCH_REVIEWS, payload: data.reviews });
-  } catch (error) {
-    console.error('Failed to fetch reviews:', error);
-    dispatch({
-      type: FETCH_REVIEWS,
-      payload: []
-    });
-  }
-};
-// Update the updateUserProfile thunk to use the correct typing for its parameter
-export const updateUserProfile = createAsyncThunk(
-  'user/updateProfile',
-  async (userData: UpdateProfilePayload, { rejectWithValue }) => {
-    const { firebaseUid, name, email, region } = userData;
+export const fetchReviews = createAsyncThunk(
+  'reviews/fetchByCafeId',
+  async (_id: string, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`/api/users/${firebaseUid}/update`, {
-        name, email, region
-      });
-      if (response.data) {
-        return response.data;
-      } else {
-        throw new Error('No data returned');
+      const response = await fetch(`http://localhost:5001/api/cafes/${_id}/reviews`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
-    } catch (error: any) {
-      return rejectWithValue('Failed to update profile');
+      return await response.json();
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue('An unexpected error occurred');
     }
   }
 );
+

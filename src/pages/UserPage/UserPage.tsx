@@ -1,18 +1,20 @@
 // src > pages> UserPage> UserPage.tsx
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // 페이지 이동을 위해 사용
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../src/redux/store';
+import { useAppSelector } from '../../redux/hooks'; // Correct import of typed hooks
 
 const UserPage: React.FC = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const user = useAppSelector((state) => state.user.userInfo);  // Use typed selector here
 
-  // Assuming the user slice contains a user object with basic profile info
-  const user = useSelector((state: RootState) => state.user.userInfo);
+  if (!user) {
+    navigate('/login');
+    return null;  // Don't render if there's no user data
+  }
 
-  // Function to navigate to the profile editing page
   const handleEditProfile = () => {
     navigate('/edit-profile');
   };
@@ -20,20 +22,15 @@ const UserPage: React.FC = () => {
   return (
     <div className="user-container">
       <div className="user-header">
-        <h1>{user?.name || 'User'}'s Profile</h1>
+        <h1>{user.name || 'User'}'s Profile</h1>
         <p>Manage your interests and profile information.</p>
       </div>
-
       <div className="profile-section">
-        <h2 className="profile-title">Profile Information</h2>
-        <div className="profile-info">
-          <div className="user-info">
-            <p><strong>이름:</strong> {user?.name}</p>
-            <p><strong>이메일:</strong> {user?.email}</p>
-            <p><strong>지역:</strong> {user?.region}</p>
-            <button onClick={handleEditProfile} className="edit-button">프로필 수정</button>
-          </div>
-        </div>
+        <h2>Profile Information</h2>
+        <p><strong>Name:</strong> {user.name || 'N/A'}</p>
+        <p><strong>Email:</strong> {user.email || 'N/A'}</p>
+        <p><strong>Region:</strong> {user.region || 'N/A'}</p>
+        <button onClick={handleEditProfile}>Edit Profile</button>
       </div>
     </div>
   );

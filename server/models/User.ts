@@ -4,12 +4,13 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema({
   firebaseUid: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
-  name: String,
-  region: String,
-  // 추가 필드
+  name: { type: String },  // Not required, depends on user providing it
+  region: { type: String },  // Not required
+  profilePhotoUrl: { type: String },  // Optional, can be set from Firebase
+  favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Cafe' }],  // Array of cafe IDs
+}, {
+  timestamps: true  // Automatically create 'createdAt' and 'updatedAt' fields
 });
-userSchema.index({ firebaseUid: 1 });
-
 
 const User = mongoose.model('User', userSchema);
 

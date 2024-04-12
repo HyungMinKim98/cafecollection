@@ -6,7 +6,7 @@ import Review from '../models/Review';
 const router = express.Router();
 
 // POST a new review
-router.post('/reviews', async (req, res) => {
+router.post('/', async (req, res) => {
   console.log('POST /api/reviews route accessed'); // Logging statement
   const review = new Review(req.body);
   try {
@@ -15,6 +15,17 @@ router.post('/reviews', async (req, res) => {
   } catch (error) {
     console.error('Error saving review:', error); // Log any errors
     res.status(400).send(error);
+  }
+});
+
+// GET all reviews
+router.get('/', async (req, res) => {
+  try {
+    const reviews = await Review.find({});
+    res.json(reviews);
+  } catch (error) {
+    console.error('Failed to retrieve reviews:', error);
+    res.status(500).send(error);
   }
 });
 

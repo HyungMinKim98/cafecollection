@@ -7,7 +7,7 @@ import Reviews from '../../components/Reviews'; // Assume this is a component fo
 import ReviewForm from './ReviewForm';
 import StarRating from '../ReviewPage/StarRating';
 import { useSelector, useDispatch } from 'react-redux';
-import { addReview as addReviewAction } from '../../redux/actions'; // Adjust import paths as necessary
+import { addReview as addReviewAction, fetchReviews } from '../../redux/actions'; // Adjust import paths as necessary
 import { RootState } from '../../redux/store';
 import { Dispatch } from 'redux';
 import {thunk} from 'redux-thunk';
@@ -34,6 +34,8 @@ import {
   WriteReviewButton
 } from './CafeDetailPageStyles'; // Import styled components
 import { Container } from '../Mainpage/styledComponents';
+import { useAppDispatch } from '../../redux/hooks';
+import ReviewsComponent from '../ReviewPage/ReviewsComponent';
 
 
 
@@ -79,26 +81,32 @@ const CafeDetailPage = () => {
   const [cafe, setCafe] = useState<Cafe | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  const dispatch: Dispatch<any> = useDispatch();
-  const reviews = useSelector((state: RootState) => state.reviews) || [];
+  const dispatch = useAppDispatch(); // This should provide the correct dispatch type for thunks
+  const reviews = useSelector((state: RootState) => state.reviews);
 
   const handleReviewSubmit = async (newReview: Review) => {
-    dispatch(postReview(newReview)); // Correct usage of dispatch
+    // Assuming postReview correctly handles the review submission and updates the state
+    dispatch(postReview(newReview)).then(() => {
+      // Optionally, fetch updated reviews here or handle through redux state update
+    }).catch(error => {
+      console.error('Failed to submit review:', error);
+    });
   };
 
   
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 백엔드 API 주소 확인 및 수정
         const response = await fetch(`http://localhost:5001/cafes/${id}`);
-        if (!response.ok) throw new Error('Cafe not found');
+        if (!response.ok) {
+          throw new Error('Cafe not found');
+        }
         const data: Cafe = await response.json();
         setCafe(data);
         setError(null);
       } catch (err) {
         setError('An unknown error occurred');
+        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -107,6 +115,24 @@ const CafeDetailPage = () => {
     fetchData();
   }, [id]);
 
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchReviews(id));  // Correctly calling with id
+    }
+  }, [dispatch, id]);
+
+  useEffect(() => {
+    console.log('Reviews from state:', reviews);
+  }, [reviews]);
+  
+  if (loading) return <div>Loading cafe details...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!cafe) return <div>Cafe not found.</div>;
+
+  const mapLocation = {
+    lat: cafe.location.coordinates[1],
+    lng: cafe.location.coordinates[0],
+  };
 
   const navigateToReviewForm = () => {
     navigate(`/cafes/${id}/review/new`);
@@ -121,10 +147,6 @@ const CafeDetailPage = () => {
     { user: "John Smith", comment: "Friendly staff and cozy atmosphere." },
   ];
 
-  const mapLocation = {
-    lat: cafe.location.coordinates[1],
-    lng: cafe.location.coordinates[0],
-  };
 
   return (
     <CafeContainer>
@@ -145,6 +167,10 @@ const CafeDetailPage = () => {
         ))}
         </Menu>
         <Map location={mapLocation} />
+        <div>
+        <ReviewsComponent _id={cafe._id}  />
+      </div>
+
         <div>
         {reviews.reviews && reviews.reviews.length > 0 ? reviews.reviews.map((review: Review) => (
           <ReviewItem key={review.id}>
