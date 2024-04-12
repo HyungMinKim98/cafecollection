@@ -18,7 +18,7 @@ interface UpdateProfilePayload {
 export const addReview = (newReview: Review) => async (dispatch: Dispatch) => {
   try {
     // Simulate posting the review to a backend
-    const response = await fetch('http://localhost:5001/reviews', {
+    const response = await fetch(`http://localhost:5001/api/cafes/${_id}/reviews`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
