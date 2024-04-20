@@ -71,9 +71,9 @@ router.post('/:firebaseUid/update', async (req, res) => {
       console.log(`User not found for UID: ${firebaseUid}`);
       res.status(404).json({ message: 'User not found.' });
     }
-  } catch (error) {
+  } catch (error:any) {
     console.error('Error updating user profile:', error);
-    res.status(500).json({ message: 'Unknown error occurred.' });
+    res.status(500).json({ message: 'Unknown error occurred.', error: error.message });
   }
 });
 export default router;

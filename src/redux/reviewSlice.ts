@@ -1,19 +1,14 @@
 //src>redux> reviewSlice.ts
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { RootState, ReviewData, ReviewsState, Review } from '../types/types';
-
+import {  ReviewData, ReviewsState, Review } from '../types/types';
+import store from './store';
 // Define a type for the review data you expect to send
 
 
-interface ThunkApiConfig {
-  rejectValue: string;  // This is the type of the rejection value
-}
-
-
 // Define async thunks
-export const postReview = createAsyncThunk<Review, { reviewData: ReviewData; cafeId: string; token: string }, { rejectValue: string }>(
+export const postReview = createAsyncThunk(
   'reviews/postReview',
-  async ({ reviewData, cafeId, token }, { rejectWithValue }) => {
+  async ({ reviewData, cafeId, token }: { reviewData: ReviewData; cafeId: string; token: string }, { rejectWithValue }) => {
     try {
       const response = await fetch(`http://localhost:5001/api/cafes/${cafeId}/reviews`, {
         method: 'POST',
@@ -35,9 +30,9 @@ export const postReview = createAsyncThunk<Review, { reviewData: ReviewData; caf
 );
 
 // Async thunk for fetching reviews by cafe ID
-export const fetchReviews = createAsyncThunk<Review[], string, { rejectValue: string }>(
+export const fetchReviews = createAsyncThunk(
   'reviews/fetchByCafeId',
-  async (cafeId, { rejectWithValue }) => {
+  async (cafeId: string, { rejectWithValue }) => {
     try {
       const response = await fetch(`http://localhost:5001/api/cafes/${cafeId}/reviews`);
       if (!response.ok) {
@@ -51,15 +46,14 @@ export const fetchReviews = createAsyncThunk<Review[], string, { rejectValue: st
   }
 );
 
-const initialState: ReviewsState = {
-  reviews: [],
-  loading: false,
-  error: null,
-};
-
+// Review Slice
 const reviewsSlice = createSlice({
   name: 'reviews',
-  initialState,
+  initialState: {
+    reviews: [],
+    loading: false,
+    error: null,
+  } as ReviewsState,
   reducers: {},
   extraReducers: (builder) => {
     builder

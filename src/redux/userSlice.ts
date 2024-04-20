@@ -33,12 +33,17 @@ export const updateUserProfile = createAsyncThunk(
     }
     try {
       const response = await axios.post(`http://localhost:5001/api/users/${userInfo.firebaseUid}/update`, userData);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue('An unknown error occurred');
+      if (response.data) {
+        return response.data;
+      } else {
+        throw new Error('No response data');
+      }
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'An unknown error occurred');
     }
   }
 );
+
 
 const userSlice = createSlice({
   name: 'user',

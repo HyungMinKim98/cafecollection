@@ -2,8 +2,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import reviewsSlice from './reviewSlice'; // Update this path as necessary
 import userSlice from './userSlice';
-import { thunk } from 'redux-thunk';
-import { Review, User } from '../types/types';
 import cafeReducer from './reducers/cafeReducer';
 
 export const store = configureStore({

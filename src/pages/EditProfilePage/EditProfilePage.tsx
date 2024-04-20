@@ -10,11 +10,19 @@ import { updateUserProfile } from '../../redux/userSlice';
 const EditProfilePage: React.FC = () => {
   const dispatch = useAppDispatch();  // Using the typed dispatch
   const navigate = useNavigate();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [region, setRegion] = useState('');
   const user = useAppSelector((state) => state.user.userInfo); // Access user info from Redux store
 
+  // 상태 초기화
+  const [name, setName] = useState(user?.name ?? '');
+  const [email, setEmail] = useState(user?.email ?? '');
+  const [region, setRegion] = useState(user?.region ?? '');
+  
+  // 유저 정보가 변경될 때마다 폼 상태 업데이트
+  useEffect(() => {
+    setName(user ? user.name : '');
+    setEmail(user ? user.email : '');
+    setRegion(user ? user.region : '');
+  }, [user]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -32,8 +40,9 @@ const EditProfilePage: React.FC = () => {
       })).unwrap();
       console.log("Profile updated successfully", resultAction);
       navigate('/user');
-    } catch (err) {
+    } catch (err:any) {
       console.error("Failed to update profile", err);
+      alert(`Error: ${err.message || 'Unknown error'}`);
     }
   };
 

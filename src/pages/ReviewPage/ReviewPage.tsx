@@ -81,20 +81,18 @@ const ReviewPage: React.FC = () => {
   useEffect(() => {
     const fetchCafeDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:5001/cafes/${id}`); // 실제 요청 주소로 변경하세요
+        const response = await fetch(`http://localhost:5001/cafes/${id}`);
+        if (!response.ok) throw new Error('Cafe not found');
+        
         const data: Cafe = await response.json();
-        if (response.ok) {
-          setCafeName('Cafe XYZ'); // Dummy data for now
-        } else {
-          throw new Error('Cafe not found');
-        }
+        setCafeName(data.name);
       } catch (error) {
         console.error("Fetching cafe details failed", error);
       }
     };
 
     fetchCafeDetails();
-  }, [id]); // id가 변경될 때마다 이 함수를 다시 실행
+  }, [id]);
 
   // 별점 변경 핸들러 추가
   const handleRatingChange = (rating: number) => {
@@ -138,8 +136,7 @@ const ReviewPage: React.FC = () => {
     });
     };
         // 리뷰 제출 후 페이지 이동 또는 상태 초기화
-        navigate(`/cafes/${id}`);
-      };
+     navigate(`/cafes/${id}`);
 
 
   return (

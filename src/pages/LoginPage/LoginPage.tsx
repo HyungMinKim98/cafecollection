@@ -43,17 +43,16 @@ const LoginPage = () => {
     const auth = getAuth();
 
     signInWithPopup(auth, provider)
-    .then((result) => {
+    .then(async (result) => {
       const user = result.user;
-      // Navigate immediately after login
-      navigate('/'); // Redirect to home page
-      // Optionally check for profile completion in background
-      checkUserProfile(user.uid).then(needsCompletion => {
-        if (needsCompletion) {
-          // Notify user to complete their profile at their convenience
-          console.log("Please complete your profile when convenient.");
-        }
-      });
+      const needsCompletion = await checkUserProfile(user.uid);
+      if (needsCompletion) {
+        // Direct user to complete their profile
+        navigate('/complete-profile'); // Change to your actual route
+      } else {
+        // Go to homepage or intended route
+        navigate('/');
+      }
     })
     .catch((error) => {
       console.error("Login failed", error);

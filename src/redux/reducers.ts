@@ -1,3 +1,4 @@
+// src>redux>reducers.ts
 import { ADD_REVIEW, FETCH_REVIEWS } from './actionTypes';
 import { Review } from '../types/types';
 
