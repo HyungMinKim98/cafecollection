@@ -14,7 +14,6 @@ import multer from 'multer';
 import User from './models/User'; // 수정된 임포트 경로
 
 
-require('dotenv').config(); // If you're using JavaScript
 
 // Set up multer for file storage
 const storage = multer.diskStorage({

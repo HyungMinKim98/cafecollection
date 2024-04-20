@@ -6,8 +6,8 @@ import styled from 'styled-components';
 import { Cafe } from '../../types/cafe';
 import { postReview } from '../../redux/reviewSlice';
 import { useDispatch } from 'react-redux';
-import { ClientReview } from '../../types/types';
 import { AppDispatch } from '../../redux/store';
+import { ReviewData } from '../../types/types'; // Assuming ReviewData is defined here
 
 const InlineContainer = styled.div`
   display: flex;
@@ -84,7 +84,7 @@ const ReviewPage: React.FC = () => {
         const response = await fetch(`http://localhost:5001/cafes/${id}`); // 실제 요청 주소로 변경하세요
         const data: Cafe = await response.json();
         if (response.ok) {
-          setCafeName(data.name); // 음식점 이름 설정
+          setCafeName('Cafe XYZ'); // Dummy data for now
         } else {
           throw new Error('Cafe not found');
         }
@@ -120,28 +120,26 @@ const ReviewPage: React.FC = () => {
       console.error("Cafe ID is undefined");
       return;
     }
-    const finalReview: ClientReview = {
-      cafeId: id,
-      user: review.user || '익명',
-      comment: review.comment,
+    const reviewData: ReviewData = {
+      text: review.comment,
       rating: review.rating,
-      // 파일 업로드 관련 처리 필요
+      userId: review.user, // Ensure the user ID is being correctly set or passed
     };
 
-// 비동기 액션 디스패치 수정 예시
-  dispatch(postReview(finalReview))
-  .unwrap() // `unwrapResult`의 축약형 메서드를 사용하여 Promise 처리
-  .then((review) => {
-    console.log('Review submitted successfully', review);
-    navigate(`/cafes/${id}`);
-  })
-  .catch((error: any) => { // 명시적인 any 타입 선언 또는 적절한 타입 정의
-    console.error('Failed to submit review', error.message || 'Unknown error');
-  });
-
-    // 리뷰 제출 후 페이지 이동 또는 상태 초기화
-    navigate(`/cafes/${id}`);
-  };
+    // 비동기 액션 디스패치 수정 예시
+    dispatch(postReview({ reviewData, cafeId: id, token: 'your_token_here' }))
+    .unwrap()
+    .then(() => {
+      console.log('Review submitted successfully');
+      navigate(`/cafes/${id}`);
+    })
+    .catch((error: any) => {
+      console.error('Failed to submit review', error.message || 'Unknown error');
+    });
+    };
+        // 리뷰 제출 후 페이지 이동 또는 상태 초기화
+        navigate(`/cafes/${id}`);
+      };
 
 
   return (
@@ -158,13 +156,13 @@ const ReviewPage: React.FC = () => {
             id="user"
             name="user"
             value={review.user}
-            onChange={handleInputChange}
+            onChange={(e) => setReview({ ...review, user: e.target.value })}
             required
           />
         </div>
         <div>
           <label htmlFor="star">별점</label>
-          <StarRating rating={review.rating} setRating={handleRatingChange} />
+          <StarRating rating={review.rating} setRating={(rating) => setReview({ ...review, rating })} />
         </div>
       </InlineContainer>
       <label htmlFor="comment">리뷰</label>
@@ -172,7 +170,7 @@ const ReviewPage: React.FC = () => {
         id="comment"
         name="comment"
         value={review.comment}
-        onChange={handleInputChange}
+        onChange={(e) => setReview({ ...review, comment: e.target.value })}
         required
       />
       <label htmlFor="photo">Upload a Photo:</label>

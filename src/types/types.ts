@@ -31,30 +31,26 @@ export interface Review {
   rating?: number; // Optional, in case you want to add ratings later
   photoUrl?: string; 
 }
-
-export interface ClientReview {
-  cafeId: string;
-  user: string;
-  comment: string;
-  rating?: number;
-  photoUrl?: string;
+export interface ReviewData {
+  text: string;
+  rating: number;
+  userId: string;
 }
 
-export interface ReviewState {
+export interface ReviewsState {
   reviews: Review[];
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  loading: boolean;
   error: string | null;
-}
-
-export interface User {
-  name?: string;
-  email?: string;
-  region?: string;
-  firebaseUid?: string;
 }
 
 export interface UserState {
   userInfo: User | null;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
+}
+export interface User {
+  name?: string;
+  email?: string;
+  region?: string;
+  firebaseUid?: string;
 }

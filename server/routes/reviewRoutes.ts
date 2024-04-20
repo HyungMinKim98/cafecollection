@@ -1,31 +1,47 @@
 // src/redux/reducers/reviewReducer.ts
 
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import Review from '../models/Review';
 
 const router = express.Router();
 
-// POST a new review
-router.post('/', async (req, res) => {
-  console.log('POST /api/reviews route accessed'); // Logging statement
-  const review = new Review(req.body);
+// Middleware to check if the user is authenticated
+function authenticate(req: Request, res: Response, next: NextFunction) {
+    if (!req.headers.authorization) {
+      res.status(401).send('Authentication required');
+      return;
+  }
+  // Suppose your token is valid
+  next();
+}
+
+// POST a new review to a specific cafe
+router.post('/:cafeId/reviews', authenticate, async (req: Request, res: Response) => {
+  const { cafeId } = req.params;
+  const { userId, text, rating } = req.body;
+
   try {
-    const newReview = await review.save();
-    res.status(201).json(newReview);
+      const newReview = new Review({
+          cafe: cafeId,
+          user: userId,
+          content: text,
+          rating
+      });
+      await newReview.save();
+      res.status(201).json(newReview);
   } catch (error) {
-    console.error('Error saving review:', error); // Log any errors
-    res.status(400).send(error);
+      res.status(500).json({ message: 'Failed to post review', error: (error as Error).message });
   }
 });
 
-// GET all reviews
-router.get('/', async (req, res) => {
+// GET all reviews for a specific cafe
+router.get('/:cafeId/reviews', async (req: Request, res: Response) => {
+  const { cafeId } = req.params;
   try {
-    const reviews = await Review.find({});
-    res.json(reviews);
+      const reviews = await Review.find({ cafe: cafeId });
+      res.json(reviews);
   } catch (error) {
-    console.error('Failed to retrieve reviews:', error);
-    res.status(500).send(error);
+      res.status(500).json({ message: 'Failed to retrieve reviews', error: (error as Error).message });
   }
 });
 

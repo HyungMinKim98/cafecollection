@@ -84,15 +84,6 @@ const CafeDetailPage = () => {
   const dispatch = useAppDispatch(); // This should provide the correct dispatch type for thunks
   const reviews = useSelector((state: RootState) => state.reviews);
 
-  const handleReviewSubmit = async (newReview: Review) => {
-    // Assuming postReview correctly handles the review submission and updates the state
-    dispatch(postReview(newReview)).then(() => {
-      // Optionally, fetch updated reviews here or handle through redux state update
-    }).catch(error => {
-      console.error('Failed to submit review:', error);
-    });
-  };
-
   
   useEffect(() => {
     const fetchData = async () => {
@@ -124,7 +115,7 @@ const CafeDetailPage = () => {
   useEffect(() => {
     console.log('Reviews from state:', reviews);
   }, [reviews]);
-  
+
   if (loading) return <div>Loading cafe details...</div>;
   if (error) return <div>Error: {error}</div>;
   if (!cafe) return <div>Cafe not found.</div>;

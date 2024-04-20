@@ -1,16 +1,15 @@
 // src/redux/store.ts
 import { configureStore } from '@reduxjs/toolkit';
 import reviewsSlice from './reviewSlice'; // Update this path as necessary
-import reviewsReducer from '../redux/reducers/reviewsReducer';
+import userSlice from './userSlice';
 import { thunk } from 'redux-thunk';
-import userReducer from './userSlice'; // Make sure this path is correct
 import { Review, User } from '../types/types';
 import cafeReducer from './reducers/cafeReducer';
 
 export const store = configureStore({
   reducer: {
-    user: userReducer,
-    reviews: reviewsReducer,
+    user: userSlice,
+    reviews: reviewsSlice,
     cafe: cafeReducer,  // Add this line to include the cafe reducer in the store
   },
 });

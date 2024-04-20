@@ -1,62 +1,61 @@
 //src>redux> reviewSlice.ts
-import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { RootState } from './store';
-import { Review } from '../types/types';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { RootState, ReviewData, ReviewsState, Review } from '../types/types';
+
+// Define a type for the review data you expect to send
 
 
-interface ReviewState {
-  reviews: Review[];
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
-  error: string | null;
+interface ThunkApiConfig {
+  rejectValue: string;  // This is the type of the rejection value
 }
 
-// Initial state
-const initialState: ReviewState = {
-  reviews: [],
-  status: 'idle',
-  error: null,
-};
 
-// Async thunk for posting a review
-export const postReview = createAsyncThunk(
+// Define async thunks
+export const postReview = createAsyncThunk<Review, { reviewData: ReviewData; cafeId: string; token: string }, { rejectValue: string }>(
   'reviews/postReview',
-  async (reviewData: Review, { rejectWithValue }) => {
+  async ({ reviewData, cafeId, token }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`http://localhost:5001/api/reviews`, {
+      const response = await fetch(`http://localhost:5001/api/cafes/${cafeId}/reviews`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(reviewData),
       });
-      const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || 'Unknown error');
+        const errorData = await response.json();
+        return rejectWithValue(errorData.message);
       }
-      return data;
-    } catch (error: any) { // Explicitly casting error as any to access message property
-      return rejectWithValue(error.message || 'Failed to post review');
+      return await response.json();
+    } catch (error) {
+      return rejectWithValue((error as Error).message);
     }
   }
 );
 
-export const fetchReviews = createAsyncThunk(
+// Async thunk for fetching reviews by cafe ID
+export const fetchReviews = createAsyncThunk<Review[], string, { rejectValue: string }>(
   'reviews/fetchByCafeId',
-  async (_id: string, { rejectWithValue }) => {
+  async (cafeId, { rejectWithValue }) => {
     try {
-      const response = await fetch(`http://localhost:5001/api/cafes/${_id}/reviews`);
+      const response = await fetch(`http://localhost:5001/api/cafes/${cafeId}/reviews`);
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        const errorData = await response.json();
+        return rejectWithValue(errorData.message);
       }
-      const data = await response.json();
-      console.log('Fetched Reviews:', data);  // Log to see what data is returned
-      return data;
+      return await response.json();
     } catch (error) {
-      if (error instanceof Error) {
-        return rejectWithValue(error.message);
-      }
-      return rejectWithValue('An unexpected error occurred');
+      return rejectWithValue((error as Error).message);
     }
   }
 );
+
+const initialState: ReviewsState = {
+  reviews: [],
+  loading: false,
+  error: null,
+};
 
 const reviewsSlice = createSlice({
   name: 'reviews',
@@ -64,16 +63,21 @@ const reviewsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(postReview.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(postReview.fulfilled, (state, action: PayloadAction<Review>) => {
-        state.status = 'succeeded';
-        state.reviews.push(action.payload); // Add new review to the list
+      .addCase(postReview.fulfilled, (state, action) => {
+        state.reviews.push(action.payload);
+        state.loading = false;
       })
       .addCase(postReview.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error?.message || 'An unknown error occurred';
+        state.error = action.error.message || null;
+        state.loading = false;
+      })
+      .addCase(fetchReviews.fulfilled, (state, action) => {
+        state.reviews = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchReviews.rejected, (state, action) => {
+        state.error = action.error.message || null;
+        state.loading = false;
       });
   },
 });
