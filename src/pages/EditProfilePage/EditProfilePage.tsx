@@ -1,11 +1,10 @@
 // src/pages/EditProfilePage/EditProfilePage.tsx
 
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { RootState } from '../../../src/redux/store';
 import { useAppDispatch, useAppSelector } from '../../../src/redux/hooks';
 import { updateUserProfile } from '../../redux/userSlice';
+import { EditContainer, Header, Form, Input, Button, Label } from './EditProfilePageStyles';
 
 const EditProfilePage: React.FC = () => {
   const dispatch = useAppDispatch();  // Using the typed dispatch
@@ -19,9 +18,9 @@ const EditProfilePage: React.FC = () => {
   
   // 유저 정보가 변경될 때마다 폼 상태 업데이트
   useEffect(() => {
-    setName(user ? user.name : '');
-    setEmail(user ? user.email : '');
-    setRegion(user ? user.region : '');
+    setName(user?.name ?? '');
+    setEmail(user?.email ?? '');
+    setRegion(user?.region ?? '');
   }, [user]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -48,16 +47,21 @@ const EditProfilePage: React.FC = () => {
 
 
   return (
-    <div className="edit-profile-container">
-      <h1>Edit Your Profile</h1>
-      <form onSubmit={handleSubmit}>
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
-        <input type="text" value={region} onChange={(e) => setRegion(e.target.value)} placeholder="Region" />
-        <button type="submit">Save Changes</button>
-      </form>
-    </div>
+    <EditContainer>
+      <Header>프로필 수정</Header>
+      <Form onSubmit={handleSubmit}>
+        <Label htmlFor="name">이름:</Label>
+        <Input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
+
+        <Label htmlFor="email">이메일:</Label>
+        <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
+
+        <Label htmlFor="region">지역:</Label>
+        <Input id="region" type="text" value={region} onChange={(e) => setRegion(e.target.value)} placeholder="Region" />
+
+        <Button type="submit">저장하기</Button>
+      </Form>
+    </EditContainer>
   );
 };
-
   export default EditProfilePage;

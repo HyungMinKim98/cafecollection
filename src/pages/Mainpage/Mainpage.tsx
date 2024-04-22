@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { Cafe } from '../../types/cafe';
-import { Container, HeroSection, SectionTitle, CafeList, CafeItem, GlobalStyles } from './styledComponents'; // Import your styled components
+import { Container, HeroSection, SectionTitle, CafeList, CafeItem, GlobalStyles } from './MainPageStyles'; // Import your styled components
 
 const Section = styled.section`
   padding: 40px 20px;

@@ -21,17 +21,18 @@ import {
 
 const checkUserProfile = async (uid: string): Promise<boolean> => {
   try {
-    // Example API call - replace with your actual backend endpoint
     const response = await fetch(`http://localhost:5001/api/users/${uid}`);
     if (!response.ok) throw new Error('Failed to fetch profile status');
     
     const data = await response.json();
-    // Assuming the backend returns an object with a 'needsCompletion' boolean
-    const needsCompletion = !data.region; // region 정보가 없다면 프로필 완성이 필요함
+    console.log("Profile data received:", data);  // 데이터 확인을 위한 로그
+
+    const needsCompletion = !data.region;  // region 정보가 없다면 프로필 완성이 필요함
+    console.log("Does profile need completion?", needsCompletion);  // 프로필 완성 여부 로그
     return needsCompletion;
   } catch (error) {
     console.error('Error checking user profile:', error);
-    return true; // Assume profile needs completion on error, or handle as appropriate
+    return true;  // 오류 발생시 프로필 완성 가정
   }
 };
 
@@ -48,7 +49,7 @@ const LoginPage = () => {
       const needsCompletion = await checkUserProfile(user.uid);
       if (needsCompletion) {
         // Direct user to complete their profile
-        navigate('/complete-profile'); // Change to your actual route
+        navigate('/profile-completion'); // Change to your actual route
       } else {
         // Go to homepage or intended route
         navigate('/');

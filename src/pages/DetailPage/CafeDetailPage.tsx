@@ -33,7 +33,7 @@ import {
   ReviewRating,
   WriteReviewButton
 } from './CafeDetailPageStyles'; // Import styled components
-import { Container } from '../Mainpage/styledComponents';
+import { Container } from '../Mainpage/MainPageStyles';
 import { useAppDispatch } from '../../redux/hooks';
 import ReviewsComponent from '../ReviewPage/ReviewsComponent';
 
@@ -78,10 +78,10 @@ export const addReview = (newReview: Review) => {
 const CafeDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch(); // Ensure proper typing if required
   const [cafe, setCafe] = useState<Cafe | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const dispatch = useAppDispatch(); // This should provide the correct dispatch type for thunks
   const reviews = useSelector((state: RootState) => state.reviews);
 
   
@@ -127,8 +127,7 @@ const CafeDetailPage = () => {
 
   const navigateToReviewForm = () => {
     navigate(`/cafes/${id}/review/new`);
-  };
-
+};
   if (loading) return <div>Loading cafe details...</div>;
   if (error) return <div>Error: {error}</div>;
   if (!cafe) return <div>Cafe not found.</div>;

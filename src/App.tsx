@@ -44,7 +44,7 @@ const App = () => {
           <Route path='about' element= {<AboutPage/>} />
           <Route path='user' element= {<UserPage/>} />
           <Route path="/profile-completion" element={<ProfileCompletionPage />} />
-          <Route path='/cafes/:id/review/new' element={<ReviewPage />} />
+          <Route path="/cafes/:id/review/new" element={<ReviewPage />} />
           <Route path='/cafes/:id' element={<CafeDetailPage />} />
           <Route path="/edit-profile" element={<EditProfilePage />} />
           <Route path='/some-path' element={<ImageUpload />} />
