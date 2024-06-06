@@ -35,6 +35,8 @@ export interface ReviewData {
   text: string;
   rating: number;
   userId: string;
+  cafe: string; // 추가된 속성
+
 }
 
 export interface ReviewsState {

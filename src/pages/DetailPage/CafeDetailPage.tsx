@@ -137,7 +137,6 @@ const CafeDetailPage = () => {
     { user: "John Smith", comment: "Friendly staff and cozy atmosphere." },
   ];
 
-
   return (
     <CafeContainer>
       <CafeHeader>
@@ -145,23 +144,21 @@ const CafeDetailPage = () => {
         {cafe.rating && <Rating>{cafe.rating} ({cafe.reviewsCount} reviews)</Rating>}
         <Address>{cafe.address}</Address>
         <Phone>{cafe.phone}</Phone>
-
       </CafeHeader>
-        <CafeImage src={`http://localhost:5001${cafe.photo}`} alt={cafe.name} />
-        <Description>{cafe.description}</Description>
-        <h4>운영시간: {cafe.hours}</h4>
-        <Menu>  
-        <h3>Menu</h3>
+      <CafeImage src={`http://localhost:5001${cafe.photo}`} alt={cafe.name} />
+      <Description>{cafe.description}</Description>
+      <h4>운영시간: {cafe.hours}</h4>
+      <Menu>
+        <h3>메뉴</h3>
         {cafe.menuHighlights.map((highlight, index) => (
           <MenuItem key={index}>{highlight}</MenuItem>
         ))}
-        </Menu>
-        <Map location={mapLocation} />
-        <div>
-        <ReviewsComponent _id={cafe._id}  />
+      </Menu>
+      <Map location={mapLocation} />
+      <div>
+        <ReviewsComponent _id={cafe._id} />
       </div>
-
-        <div>
+      <div>
         {reviews.reviews && reviews.reviews.length > 0 ? reviews.reviews.map((review: Review) => (
           <ReviewItem key={review.id}>
             <ReviewUserName>{review.user}</ReviewUserName>
@@ -172,10 +169,9 @@ const CafeDetailPage = () => {
           </ReviewItem>
         )) : <p>No reviews yet.</p>}
       </div>
-      <WriteReviewButton onClick={navigateToReviewForm}>Write a Review</WriteReviewButton>
-
-      </CafeContainer>
-    );
-  };
+      <WriteReviewButton onClick={navigateToReviewForm}>리뷰 작성</WriteReviewButton>
+    </CafeContainer>
+  );
+};
 
 export default CafeDetailPage;

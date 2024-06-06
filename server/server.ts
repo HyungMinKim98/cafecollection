@@ -41,7 +41,7 @@ app.use(cors());
 app.use(express.json()); // This is to parse JSON bodies. This negates the need for body-parser.
 
 app.use('/api', cafeRoutes);
-app.use('/api/reviews', reviewRoutes);
+app.use('/api/reviews', reviewRoutes);  // 추가된 부분
 app.use('/api/users', userRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
