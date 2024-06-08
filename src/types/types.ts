@@ -32,9 +32,9 @@ export interface Review {
   photoUrl?: string; 
 }
 export interface ReviewData {
-  text: string;
+  content: string;
   rating: number;
-  userId: string;
+  user: string; // firebaseUid를 user로 사용
   cafe: string; // 추가된 속성
 
 }

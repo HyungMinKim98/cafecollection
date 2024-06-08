@@ -1,21 +1,11 @@
-// src>pages>DetailPage>CafeDetailPage.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-// import { fetchCafeDetails } from '../api'; // Assume this is an API call function
-import Map from '../../components/Map'; // Assume this is a component for displaying maps
-import Reviews from '../../components/Reviews'; // Assume this is a component for displaying reviews
-import ReviewForm from './ReviewForm';
-import StarRating from '../ReviewPage/StarRating';
-import { useSelector, useDispatch } from 'react-redux';
-import { addReview as addReviewAction, fetchReviews } from '../../redux/actions'; // Adjust import paths as necessary
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCafe } from '../../redux/cafeSlice';
+import { fetchReviews } from '../../redux/reviewSlice';
 import { RootState } from '../../redux/store';
-import { Dispatch } from 'redux';
-import {thunk} from 'redux-thunk';
-import { Action } from 'redux'; // Import necessary types
-import { Cafe } from '../../types/cafe';
-import { postReview } from '../../redux/reviewSlice';
-import { Review } from '../../types/types';
-
+import Map from '../../components/Map';
+import ReviewsComponent from '../ReviewPage/ReviewsComponent';
 import {
   CafeContainer,
   CafeHeader,
@@ -27,94 +17,29 @@ import {
   Description,
   Menu,
   MenuItem,
-  ReviewItem,
-  ReviewUserName,
-  ReviewText,
-  ReviewRating,
   WriteReviewButton
-} from './CafeDetailPageStyles'; // Import styled components
-import { Container } from '../Mainpage/MainPageStyles';
-import { useAppDispatch } from '../../redux/hooks';
-import ReviewsComponent from '../ReviewPage/ReviewsComponent';
+} from './CafeDetailPageStyles';
 
-
-
-// Assuming you have an interface for your action and state
-interface ReviewAction {
-  type: string;
-  payload?: any;
-}
-
-export const addReview = (newReview: Review) => {
-  return async (dispatch: Dispatch<ReviewAction>): Promise<void> => {
-    try {
-      // Your async operation here
-      const response = await fetch(`http://localhost:5001/cafes/:id/reviews`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newReview),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to submit review');
-      }
-
-      const data = await response.json();
-      dispatch({
-        type: 'ADD_REVIEW_SUCCESS',
-        payload: data,
-      });
-    } catch (error) {
-      dispatch({
-        type: 'ADD_REVIEW_FAILURE',
-        payload: error,
-      });
-    }
-  };
-};
-
-const CafeDetailPage = () => {
+const CafeDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const dispatch = useAppDispatch(); // Ensure proper typing if required
-  const [cafe, setCafe] = useState<Cafe | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const reviews = useSelector((state: RootState) => state.reviews);
-
-  
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`http://localhost:5001/cafes/${id}`);
-        if (!response.ok) {
-          throw new Error('Cafe not found');
-        }
-        const data: Cafe = await response.json();
-        setCafe(data);
-        setError(null);
-      } catch (err) {
-        setError('An unknown error occurred');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [id]);
+  const dispatch = useDispatch();
+  const cafe = useSelector((state: RootState) => state.cafe.cafe);
+  const loading = useSelector((state: RootState) => state.cafe.loading);
+  const error = useSelector((state: RootState) => state.cafe.error);
+  const reviews = useSelector((state: RootState) => state.reviews.reviews);
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchReviews(id));  // Correctly calling with id
+      dispatch(fetchCafe(id) as any); // 타입 캐스팅을 통해 any를 사용
+      dispatch(fetchReviews(id) as any);
     }
-  }, [dispatch, id]);
+  }, [id, dispatch]);
 
-  useEffect(() => {
-    console.log('Reviews from state:', reviews);
-  }, [reviews]);
+
+  const navigateToReviewForm = () => {
+    navigate(`/cafes/${id}/review/new`);
+  };
 
   if (loading) return <div>Loading cafe details...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -124,18 +49,6 @@ const CafeDetailPage = () => {
     lat: cafe.location.coordinates[1],
     lng: cafe.location.coordinates[0],
   };
-
-  const navigateToReviewForm = () => {
-    navigate(`/cafes/${id}/review/new`);
-};
-  if (loading) return <div>Loading cafe details...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!cafe) return <div>Cafe not found.</div>;
-
-  const placeholderReviews = [
-    { user: "Jane Doe", comment: "Great place, love the coffee!" },
-    { user: "John Smith", comment: "Friendly staff and cozy atmosphere." },
-  ];
 
   return (
     <CafeContainer>
@@ -156,18 +69,7 @@ const CafeDetailPage = () => {
       </Menu>
       <Map location={mapLocation} />
       <div>
-        <ReviewsComponent _id={cafe._id} />
-      </div>
-      <div>
-        {reviews.reviews && reviews.reviews.length > 0 ? reviews.reviews.map((review: Review) => (
-          <ReviewItem key={review.id}>
-            <ReviewUserName>{review.user}</ReviewUserName>
-            <ReviewRating>
-              <StarRating rating={review.rating || 0} />
-            </ReviewRating>
-            <ReviewText>{review.comment}</ReviewText>
-          </ReviewItem>
-        )) : <p>No reviews yet.</p>}
+        <ReviewsComponent _id={cafe._id} reviews={reviews} />
       </div>
       <WriteReviewButton onClick={navigateToReviewForm}>리뷰 작성</WriteReviewButton>
     </CafeContainer>

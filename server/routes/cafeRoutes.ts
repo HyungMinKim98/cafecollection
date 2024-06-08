@@ -46,6 +46,7 @@ router.get('/cafes/:id/reviews', async (req, res) => {
   }
 });
 
+// Add a new review
 router.post('/cafes/:id/reviews', async (req, res) => {
   const { id } = req.params;
   const { user, content, rating } = req.body; // Assume these are provided in the body of the request

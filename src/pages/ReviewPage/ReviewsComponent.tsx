@@ -1,14 +1,15 @@
 // src>pages>ReviewPage>ReviewsComponent.tsx
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchReviews } from '../../redux/actions';
+import { fetchReviews } from '../../redux/reviewSlice';
 import { RootState } from '../../redux/store';
 import { useAppDispatch } from '../../redux/hooks';
+import { Review } from '../../types/types';
 
 interface ReviewsComponentProps {
-  _id: string; // Changed from cafeId to _id for clarity and consistency
+  _id: string;
+  reviews: Review[];
 }
-
 
 const ReviewsComponent: React.FC<ReviewsComponentProps> = ({ _id }) => {
   const dispatch = useAppDispatch();

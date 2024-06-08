@@ -6,6 +6,7 @@ import 'dotenv/config';
 import reviewRoutes from './routes/reviewRoutes';
 import userRoutes from './routes/userRoutes';
 import cafeRoutes from './routes/cafeRoutes';
+import getObjectIdByFirebaseUid from './routes/getObjectIdByFirebaseUid'; // 새로운 라우트 추가
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { swaggerDefinition } from './swaggerDefinition';
@@ -43,6 +44,7 @@ app.use(express.json()); // This is to parse JSON bodies. This negates the need 
 app.use('/api', cafeRoutes);
 app.use('/api/reviews', reviewRoutes);  // 추가된 부분
 app.use('/api/users', userRoutes);
+app.use('/api/users/getObjectIdByFirebaseUid', getObjectIdByFirebaseUid); // 새로운 라우트 추가
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/cafes', async (req, res) => {

@@ -1,31 +1,28 @@
-// src/redux/reducers/reviewReducer.ts
-
-import { Router, Request, Response, NextFunction } from 'express';
+// server/routes/reviewRoutes.ts
+import express, { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import Review from '../models/Review';
+import User from '../models/User';  // User 모델을 가져옵니다.
 
-const router = Router();
 
-// Middleware to check if the user is authenticated
-function authenticate(req: Request, res: Response, next: NextFunction) {
-    if (!req.headers.authorization) {
-      res.status(401).send('Authentication required');
-      return;
-    }
-    // Suppose your token is valid
-    next();
-}
+const router = express.Router();
 
-// POST a new review to a specific cafe
-router.post('/:cafeId/reviews', authenticate, async (req: Request, res: Response) => {
+router.post('/cafes/:cafeId/reviews', async (req: Request, res: Response) => {
   const { cafeId } = req.params;
   const { user, content, rating } = req.body;
 
   try {
+    // firebaseUid를 기반으로 MongoDB ObjectId를 조회합니다.
+    const userRecord = await User.findOne({ firebaseUid: user });
+    if (!userRecord) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
     const newReview = new Review({
-      cafe: cafeId,
-      user,
+      cafe: new mongoose.Types.ObjectId(cafeId),  // cafeId를 ObjectId로 변환
+      user: userRecord._id,  // user의 ObjectId를 사용
       content,
-      rating
+      rating,
     });
     await newReview.save();
     res.status(201).json(newReview);

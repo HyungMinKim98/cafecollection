@@ -1,9 +1,6 @@
-//src>redux> reviewSlice.ts
+// src/redux/reviewSlice.ts
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import {  ReviewData, ReviewsState, Review } from '../types/types';
-import store from './store';
-// Define a type for the review data you expect to send
-
+import { ReviewData, ReviewsState, Review } from '../types/types';
 
 // Define async thunks
 export const postReview = createAsyncThunk(
@@ -57,6 +54,9 @@ const reviewsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(postReview.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(postReview.fulfilled, (state, action) => {
         state.reviews.push(action.payload);
         state.loading = false;
@@ -64,6 +64,9 @@ const reviewsSlice = createSlice({
       .addCase(postReview.rejected, (state, action) => {
         state.error = action.error.message || null;
         state.loading = false;
+      })
+      .addCase(fetchReviews.pending, (state) => {
+        state.loading = true;
       })
       .addCase(fetchReviews.fulfilled, (state, action) => {
         state.reviews = action.payload;
