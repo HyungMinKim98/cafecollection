@@ -36,10 +36,11 @@ router.post('/cafes', async (req, res) => {
   }
 });
 
+// Get reviews for a specific cafe
 router.get('/cafes/:id/reviews', async (req, res) => {
   try {
       const { id } = req.params;
-      const reviews = await Review.find({ cafe: id }); // Assuming 'cafe' is a valid field in your Review model
+      const reviews = await Review.find({ cafe: id }).populate('user', 'name'); // 사용자 이름 포함
       res.json(reviews);
   } catch (error) {
       res.status(500).send((error as any).message);

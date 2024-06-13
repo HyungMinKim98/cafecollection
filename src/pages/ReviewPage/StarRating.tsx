@@ -4,9 +4,10 @@ import { IoMdStar, IoMdStarOutline } from 'react-icons/io';
 interface StarRatingProps {
   rating: number;
   setRating?: (rating: number) => void; // Make setRating optional
+  size?: number; // Star size prop
 }
 
-const StarRating: React.FC<StarRatingProps> = ({ rating, setRating }) => {
+const StarRating: React.FC<StarRatingProps> = ({ rating, setRating, size = 16 }) => {
   const [hover, setHover] = useState<number>(0);
 
   return (
@@ -16,9 +17,9 @@ const StarRating: React.FC<StarRatingProps> = ({ rating, setRating }) => {
         return (
           <label 
             key={index} 
-            style={{ cursor: 'pointer', margin: '0 2px' }} // Adjust margin to ensure minimal gap
-            onMouseEnter={() => setHover(ratingValue)}
-            onMouseLeave={() => setHover(0)}
+            style={{ cursor: setRating ? 'pointer' : 'default', margin: '0 2px' }} // Adjust margin
+            onMouseEnter={() => setRating && setHover(ratingValue)}
+            onMouseLeave={() => setRating && setHover(0)}
           >
             <input
               type="radio"
@@ -28,9 +29,9 @@ const StarRating: React.FC<StarRatingProps> = ({ rating, setRating }) => {
               style={{ display: 'none' }}
             />
             {ratingValue <= (hover || rating) ? (
-              <IoMdStar style={{ fontSize: '24px' }} />
+              <IoMdStar style={{ fontSize: `${size}px` }} />
             ) : (
-              <IoMdStarOutline style={{ fontSize: '24px' }} />
+              <IoMdStarOutline style={{ fontSize: `${size}px` }} />
             )}
           </label>
         );

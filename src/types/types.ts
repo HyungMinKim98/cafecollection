@@ -25,16 +25,18 @@ export type UserActionTypes = ProfileUpdateRequestAction | ProfileUpdateSuccessA
 
 export interface Review {
   id?: string;
-  cafeId: string; // Essential for associating the review with a specific cafe
+  cafeId: string;
   user: string; // The name or identifier of the reviewer
-  content: string; // The main content of the review
-  rating?: number; // Optional, in case you want to add ratings later
-  photoUrl?: string; 
+  content: string;
+  rating?: number;
+  photoUrl?: string;
 }
+
+
 export interface ReviewData {
   content: string;
   rating: number;
-  user: string; // firebaseUid를 user로 사용
+  user:  string;
   cafe: string; // 추가된 속성
 
 }

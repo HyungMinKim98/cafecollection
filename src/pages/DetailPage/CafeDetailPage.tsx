@@ -69,7 +69,7 @@ const CafeDetailPage: React.FC = () => {
       </Menu>
       <Map location={mapLocation} />
       <div>
-        <ReviewsComponent _id={cafe._id} reviews={reviews} />
+        <ReviewsComponent cafeId={cafe._id} />
       </div>
       <WriteReviewButton onClick={navigateToReviewForm}>리뷰 작성</WriteReviewButton>
     </CafeContainer>

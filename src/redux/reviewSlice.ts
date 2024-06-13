@@ -73,6 +73,7 @@ const reviewsSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchReviews.rejected, (state, action) => {
+        console.error('Error fetching reviews:', action.error.message);
         state.error = action.error.message || null;
         state.loading = false;
       });

@@ -1,12 +1,13 @@
 import React, { useEffect, useState, FormEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useQueryClient, useMutation, useQuery } from 'react-query';
+import { useQueryClient, useMutation, useQuery } from 'react-query'; // React Query 사용
 import { RootState } from '../../redux/store';
 import { ReviewData } from '../../types/types';
 import StarRating from '../ReviewPage/StarRating';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'react-redux'; // Redux 사용
 import { fetchCafeDetails } from '../../api/cafeApi';
+import ReviewsComponent from './ReviewsComponent'; // ReviewsComponent 추가
 
 const ReviewFormContainer = styled.div`
   background-color: #fff;
@@ -37,7 +38,7 @@ const SubmitButton = styled.button`
   border: none;
   border-radius: 5px;
   cursor: pointer;
-
+  margin: 12px 0;
   &:hover {
     background-color: #0056b3;
   }
@@ -47,6 +48,7 @@ const CafeNameDisplay = styled.h3`
   margin: 20px 0;
 `;
 
+// React Query로 리뷰 작성 API 호출
 const postReview = async (reviewData: ReviewData) => {
   const response = await fetch(`http://localhost:5001/api/cafes/${reviewData.cafe}/reviews`, {
     method: 'POST',
@@ -67,11 +69,12 @@ const ReviewPage: React.FC = () => {
   const [userId, setUserId] = useState<string>('');
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const firebaseUid = useSelector((state: RootState) => state.user.userInfo?.firebaseUid);
+  const firebaseUid = useSelector((state: RootState) => state.user.userInfo?.firebaseUid);  //Redux 사용 부분
   const [review, setReview] = useState<ReviewData>({ user: '', content: '', rating: 0, cafe: id || '' });
 
   const queryClient = useQueryClient();
 
+  // React Query로 카페 상세 정보 가져오기
   const { isError: isCafeError } = useQuery(['cafeDetails', id], () => fetchCafeDetails(id!), {
     onSuccess: (data) => {
       setCafeName(data.name);
@@ -79,6 +82,7 @@ const ReviewPage: React.FC = () => {
     enabled: !!id,
   });
 
+  // 사용자 ID 가져오기
   useEffect(() => {
     const fetchUserId = async () => {
       if (firebaseUid) {
@@ -98,12 +102,13 @@ const ReviewPage: React.FC = () => {
     fetchUserId();
   }, [firebaseUid]);
 
-  const mutation = useMutation(postReview, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['cafeDetails', id]);
-      navigate(`/cafes/${id}`);
-    }
-  });
+ // React Query로 리뷰 작성 처리
+ const mutation = useMutation(postReview, {
+  onSuccess: () => {
+    queryClient.invalidateQueries(['cafeDetails', id]);
+    navigate(`/cafes/${id}`);
+  }
+});
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -143,11 +148,12 @@ const ReviewPage: React.FC = () => {
           required
         ></FormTextArea>
         <label htmlFor="rating">별점</label>
-        <StarRating rating={review.rating} setRating={(rating) => setReview({ ...review, rating })} />
+        <StarRating rating={review.rating} setRating={(rating) => setReview({ ...review, rating })} size={24} /> {/* 별점 크기를 24로 설정 */}
         <SubmitButton type="submit" disabled={mutation.isLoading}>
           {mutation.isLoading ? 'Submitting...' : '리뷰 제출'}
         </SubmitButton>
       </ReviewFormElement>
+      <ReviewsComponent cafeId={id!} /> {/* ReviewsComponent 추가 */}
     </ReviewFormContainer>
   );
 };
