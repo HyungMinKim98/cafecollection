@@ -29,7 +29,10 @@ const ReviewsComponent: React.FC<ReviewsComponentProps> = ({ _id }) => {
     <div>
       {reviews.map(review => (
         <div key={review.id}>
-          <p>{review.comment}</p>
+          <p>{review.content}</p>
+          <p>Rating: {review.rating}</p>
+          <p>User: {review.user}</p>
+
         </div>
       ))}
     </div>
