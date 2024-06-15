@@ -3,6 +3,7 @@ import { FaFacebook } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { SiNaver } from "react-icons/si";
 import { RiKakaoTalkFill } from 'react-icons/ri';
+import isPropValid from '@emotion/is-prop-valid';
 
 export const LoginPageContainer = styled.div`
   display: flex;
@@ -74,7 +75,9 @@ export const SnsSignupButtonsContainer = styled.div`
   margin-top: 20px;
 `;
 
-export const SnsSignupButton = styled.button<{ variant: 'google' | 'facebook' | 'naver' | 'kakao' }>`
+export const SnsSignupButton = styled.button.withConfig({
+  shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'variant',
+})<{ variant: 'google' | 'facebook' | 'naver' | 'kakao' }>`
   margin: 5px;
   width: 40px;
   height: 40px;
@@ -86,7 +89,6 @@ export const SnsSignupButton = styled.button<{ variant: 'google' | 'facebook' | 
   cursor: pointer;
   font-size: 24px;
 
-  
   background-color: ${props => {
     switch (props.variant) {
       case 'google':
@@ -105,7 +107,6 @@ export const SnsSignupButton = styled.button<{ variant: 'google' | 'facebook' | 
   &:hover {
     opacity: 0.9;
     filter: brightness(85%);
-
   }
 `;
 export const IconGoogle = styled(FcGoogle)`

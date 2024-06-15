@@ -11,6 +11,11 @@ interface ReviewsComponentProps {
   cafeId: string;
 }
 
+const Reviewtitle = styled.div`
+  margin: 20px;
+  font-size: 22px;
+`
+
 const ReviewContainer = styled.div`
   display: flex;
   align-items: flex-start;
@@ -46,6 +51,7 @@ const ReviewRating = styled.p`
   color: #555;
 `;
 
+
 const ReviewsComponent: React.FC<ReviewsComponentProps> = ({ cafeId }) => {
   const dispatch = useDispatch();
   const { reviews, loading, error } = useSelector((state: RootState) => state.reviews);
@@ -59,7 +65,7 @@ const ReviewsComponent: React.FC<ReviewsComponentProps> = ({ cafeId }) => {
   console.log(reviews);
   return (
     <div>
-      <h3>Reviews</h3>
+      <Reviewtitle>Reviews</Reviewtitle>
       {reviews.length > 0 ? (
         reviews.map((review: Review) => (
           <ReviewContainer key={review.id}>

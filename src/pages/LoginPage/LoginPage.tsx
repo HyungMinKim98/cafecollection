@@ -1,6 +1,6 @@
 //src > pages> LoginPage>LoginPage.tsx
 import '../../firebase'; // Firebase 초기화 먼저 임포트
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useNavigate } from 'react-router-dom'; // useNavigate 임포트
 import React, { useState } from 'react';
 import {
@@ -28,7 +28,11 @@ const checkUserProfile = async (uid: string): Promise<boolean> => {
     console.log("Profile data received:", data);  // 데이터 확인을 위한 로그
 
     const needsCompletion = !data.region;  // region 정보가 없다면 프로필 완성이 필요함
-    console.log("Does profile need completion?", needsCompletion);  // 프로필 완성 여부 로그
+    if (needsCompletion) {
+      console.log("Profile needs completion.");
+    } else {
+      console.log("Profile is complete.");
+    }
     return needsCompletion;
   } catch (error) {
     console.error('Error checking user profile:', error);
@@ -38,35 +42,53 @@ const checkUserProfile = async (uid: string): Promise<boolean> => {
 
 const LoginPage = () => {
   const navigate = useNavigate(); // 여기에서 useNavigate 훅 사용
-  // 로그인 함수 정의
-  const loginWithGoogle = () => {
-    const provider = new GoogleAuthProvider();
-    const auth = getAuth();
-
-    signInWithPopup(auth, provider)
-    .then(async (result) => {
-      const user = result.user;
-      const needsCompletion = await checkUserProfile(user.uid);
-      if (needsCompletion) {
-        // Direct user to complete their profile
-        navigate('/profile-completion'); // Change to your actual route
-      } else {
-        // Go to homepage or intended route
-        navigate('/');
-      }
-    })
-    .catch((error) => {
-      console.error("Login failed", error);
-    });
-};
-
+  const auth = getAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState<string | null>(null); // 에러 상태 추가
+  
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(email, password, rememberMe);
+    setError(null); // 에러 상태 초기화
+
+    if (!email || !password) {
+      setError('이메일과 비밀번호를 입력해주세요.'); // 이메일과 비밀번호가 입력되지 않은 경우 에러 메시지 설정
+      return;
+    }
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      const needsCompletion = await checkUserProfile(user.uid);
+      if (needsCompletion) {
+        navigate('/profile-completion'); // Change to your actual route
+      } else {
+        navigate('/');
+      }
+    } catch (error: any) {
+      setError(error.message); // 에러 메시지 설정
+      console.error("Login failed:", error); // 디버깅 로그 추가
+    }
+  };
+
+  const loginWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      const needsCompletion = await checkUserProfile(user.uid);
+      if (needsCompletion) {
+        navigate('/profile-completion'); // Change to your actual route
+      } else {
+        navigate('/');
+      }
+    } catch (error) {
+      console.error("Google login failed:", error); // Google 로그인 실패 디버깅 로그 추가
+      setError('Google 로그인에 실패했습니다. 다시 시도해주세요.');
+    }
   };
 
   return (
@@ -75,6 +97,7 @@ const LoginPage = () => {
         <LoginBox>
           <h3>Login</h3>
           <p>P2P 플랫폼 000입니다.</p>
+          {error && <p style={{ color: 'red' }}>{error}</p>} {/* 에러 메시지 표시 */}
           <form onSubmit={handleSubmit}>
             {/* Email */}
             <FormGroup>
@@ -123,9 +146,9 @@ const LoginPage = () => {
               <a href="idsearch">아이디 찾기</a> | <a href="passwordreset">비밀번호 찾기</a>| <a href="register">회원가입</a>
             </LoginFooter>
           </form>
-          </LoginBox>
-        </LoginFormContainer>
-      </LoginPageContainer>
+        </LoginBox>
+      </LoginFormContainer>
+    </LoginPageContainer>
   );
 };
 

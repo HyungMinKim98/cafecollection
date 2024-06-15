@@ -6,26 +6,23 @@ import { setUser,clearUser } from './redux/userSlice';
 
 const useAuth = () => {
   const dispatch = useDispatch();
-  const auth = getAuth();
 
   useEffect(() => {
+    const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         dispatch(setUser({
           firebaseUid: user.uid,
-          name: user.displayName,
-          email: user.email,
-          photoUrl: user.photoURL,
-          region: 'Default Region'  // Assuming you want to set a default
+          name: user.displayName || 'Anonymous', // 변경된 부분
+          email: user.email || 'No Email', // 변경된 부분
+          photoUrl: user.photoURL || undefined, // 변경된 부분
+          region: 'Default Region' // Assuming you want to set a default
         }));
-      } else {
-        dispatch(clearUser());
       }
     });
-    return () => unsubscribe(); // Cleanup subscription on unmount
-  }, [dispatch, auth]);
 
-  return;
+    return () => unsubscribe();
+  }, [dispatch]);
 };
 
 export default useAuth;

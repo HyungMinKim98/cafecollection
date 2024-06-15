@@ -57,4 +57,5 @@ export interface User {
   email?: string;
   region?: string;
   firebaseUid?: string;
+  photoUrl?: string; // 새로 추가된 속성
 }
