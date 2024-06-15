@@ -1,4 +1,5 @@
-import React from 'react';
+// src > pages > AboutPage > AboutPage.tsx
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const PageContainer = styled.div`
@@ -26,21 +27,16 @@ const Paragraph = styled.p`
 const AboutPage = () => {
   return (
     <PageContainer>
-      <Title>About Coffee</Title>
+      <Title>커피에 대하여</Title>
       <Section className="history">
         <SectionTitle>커피의 역사</SectionTitle>
-        <Paragraph>커피의 역사는 15세기로 거슬러 올라가며, 일부 보고서와 전설에 따르면 그 이전부터 사용되었다고 합니다. 커피의 첫 사용과 관련된 다양한 이야기가 전해져 내려오고 있으며, 가장 유명한 이야기 중 하나는 에티오피아의 한 목동이 자신의 양들이 커피나무의 열매를 먹고 이상하게 활발해진 것을 발견한 것에서 시작됩니다. 이후 목동은 이 열매의 효능을 스승에게 알렸고, 그렇게 해서 커피는 사람들 사이에 퍼지기 시작했습니다.</Paragraph>
-        <Paragraph>초기에는 주로 수도승들 사이에서 기도 중에 잠을 쫓기 위해 커피가 사용되었습니다. 15세기에 이르러, 아라비아 반도에서 커피는 종교적인 집회에서의 사용을 넘어 사교의 장으로 자리 잡기 시작했습니다. 이때부터 커피하우스가 등장하며, '정보의 교환소'로써의 역할을 하게 됩니다.</Paragraph>
-        </Section>
+        <Paragraph>커피의 역사는 15세기로 거슬러 올라가며, 일부 보고서와 전설에 따르면 그 이전에도 사용되었다고 합니다. 커피의 첫 사용에 관한 많은 이야기가 있으며, 그 중 가장 유명한 이야기는 에티오피아의 한 목자가 커피나무의 열매를 먹은 후 양들이 이상하게 활력을 되찾는 것을 발견한 것에서 시작됩니다. 이후 목자는 이 열매의 효능을 스승에게 알렸고, 이로써 커피는 사람들 사이에서 퍼지기 시작했습니다.</Paragraph>
+        <Paragraph>초기에는 커피가 주로 승려들 사이에서 기도를 할 때 깨어있기 위해 사용되었습니다. 15세기경 아라비아 반도에서는 커피가 종교 모임에서 벗어나 사회적 모임의 장소로 자리잡게 되었습니다. 이 시점부터 커피 하우스가 등장하였고 '정보 교환소' 역할을 하였습니다.</Paragraph>
+      </Section>
 
       <Section className="origins">
         <SectionTitle>커피의 기원</SectionTitle>
-        <Paragraph>커피나무는 원래 아프리카와 아시아의 열대 지역에서 자생했습니다. 하지만 오늘날에는 전 세계적으로 70개국 이상에서 재배되고 있습니다. 특히 에티오피아는 커피의 기원지로 여겨지며, 다양한 커피의 종류와 풍미가 이 지역에서 발견됩니다. 커피의 인기가 높아짐에 따라, 커피나무는 전 세계의 다양한 지역으로 전파되었습니다.</Paragraph>
-      </Section>
-
-      <Section className="types">
-        <SectionTitle>커피의 종류</SectionTitle>
-        <Paragraph>오늘날에는 주로 두 가지 커피 종, 아라비카와 로부스타가 재배됩니다. 아라비카 커피는 일반적으로 더 높은 평가를 받으며, 그 풍미가 풍부하고 카페인 함량이 낮은 것으로 알려져 있습니다. 반면, 로부스타 커피는 재배하기 쉽고 카페인 함량이 높으며, 맛이 강하고 쓴맛이 납니다. 이 두 종류 외에도, 여러 가지 희귀 종류의 커피가 세계 곳곳에서 재배되고 있으며, 각각 독특한 풍미와 특성을 가지고 있습니다.</Paragraph>
+        <Paragraph>커피나무는 원래 아프리카와 아시아의 열대 지역에서 자랐습니다. 그러나 오늘날에는 전 세계 70개 이상의 국가에서 재배되고 있습니다. 특히 에티오피아는 커피의 기원으로 간주되며, 이 지역에는 다양한 종류와 맛의 커피가 존재합니다. 커피의 인기가 증가함에 따라 커피나무는 전 세계로 퍼졌습니다.</Paragraph>
       </Section>
     </PageContainer>
   );
