@@ -1,9 +1,9 @@
-카페모아
+# 카페모아
 개인 프로젝트: 카페 컬렉션 사이트
 
-사용된 기술
-프런트엔드: React, TypeScript, Redux-Toolkit, React-Query, Styled Components, Axios
-백엔드: Express.js, MongoDB, Mongoose
+# 사용된 기술
+- 프런트엔드: React, TypeScript, Redux-Toolkit, React-Query, Styled Components, Axios
+- 백엔드: Express.js, MongoDB, Mongoose
 인증: Firebase
 
 프로젝트 설명
